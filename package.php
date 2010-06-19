@@ -64,7 +64,7 @@ $packagexml->setChannel($channel);
 $packagexml->generateContents();
 
 // generate package.xml
-if (php_sapi_name() == 'cli' && $argc > 1 && $argv[1] == 'make') {
+if (php_sapi_name() === 'cli' && $_SERVER['argc'] > 1 && $_SERVER['argv'][1] === 'make') {
     $make = true;
 } elseif (!empty($_GET['make'])) {
     $make = true;
