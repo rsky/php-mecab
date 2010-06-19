@@ -23,7 +23,6 @@ EOS;
 // set parameters to the package
 $packagexml = new PEAR_PackageFileManager2;
 $packagexml->setOptions(array(
-    //'packagefile'       => 'package2.xml',
     'baseinstalldir'    => '/',
     'packagedirectory'  => dirname(__FILE__),
     'filelistgenerator' => 'file',
@@ -53,7 +52,7 @@ $packagexml->setAPIVersion($apiversion);
 $packagexml->setReleaseStability($stability);
 $packagexml->setAPIStability($apistability);
 
-$packagexml->addMaintainer('lead', 'rsky', 'Ryusuke SEKIYAMA,', 'rsky0711@ozmm.org');
+$packagexml->addMaintainer('lead', 'rsky', 'Ryusuke SEKIYAMA,', 'rsky0711@gmail.com');
 
 $packagexml->setPackageType('extsrc');
 $packagexml->setProvidesExtension($packagename);
@@ -63,9 +62,6 @@ $packagexml->setPearinstallerDep('1.4.1');
 
 $packagexml->setChannel($channel);
 $packagexml->generateContents();
-
-// get a PEAR_PackageFile object
-//$packagexml1 = &$packagexml->exportCompatiblePackageFile1();
 
 // generate package.xml
 if (php_sapi_name() == 'cli' && $argc > 1 && $argv[1] == 'make') {
@@ -77,10 +73,8 @@ if (php_sapi_name() == 'cli' && $argc > 1 && $argv[1] == 'make') {
 }
 // note use of debugPackageFile() - this is VERY important
 if ($make) {
-    //$packagexml1->writePackageFile();
     $packagexml->writePackageFile();
     $data = file_get_contents('package.xml');
 } else {
-    //$packagexml1->debugPackageFile();
     $packagexml->debugPackageFile();
 }
