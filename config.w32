@@ -1,0 +1,23 @@
+// $ Id: $
+// vim:ft=javascript
+
+// TODO: check for MeCab version
+
+ARG_WITH('mecab', 'MeCab support', 'yes,shared');
+
+if (PHP_MECAB != "no") {
+
+  if (!CHECK_LIB("mecab.lib", "mecab", PHP_MECAB)) {
+    ERROR("mecab: library 'mecab' not found");
+  }
+
+  if (!CHECK_LIB("stdc++.lib", "mecab", PHP_MECAB)) {
+    ERROR("mecab: library 'stdc++' not found");
+  }
+
+  if (!CHECK_HEADER_ADD_INCLUDE("mecab.h", "CFLAGS_MECAB")) {
+    ERROR("mecab: header 'mecab.h' not found");
+  }
+
+  EXTENSION("mecab", "mecab.c");
+}
