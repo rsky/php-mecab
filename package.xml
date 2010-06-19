@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<package packagerversion="1.9.0" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
+<package packagerversion="1.9.1" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
     http://pear.php.net/dtd/tasks-1.0.xsd
     http://pear.php.net/dtd/package-2.0
     http://pear.php.net/dtd/package-2.0.xsd">
  <name>mecab</name>
- <channel>__uri</channel>
+ <channel>pecl.opendogs.org</channel>
  <summary>The PHP bindings of the MeCab.</summary>
  <description>The PHP bindings of the MeCab.</description>
  <lead>
   <name>Ryusuke SEKIYAMA,</name>
-  <user>rsky</user>
+  <user>rsk</user>
   <email>rsky0711@gmail.com</email>
   <active>yes</active>
  </lead>
  <date>2010-06-19</date>
- <time>03:41:33</time>
+ <time>14:59:59</time>
  <version>
   <release>0.4.1</release>
   <api>0.4.0</api>
@@ -223,7 +223,7 @@
    <file baseinstalldir="/" md5sum="4a528ac4719ac0cb1e1bb29c3bf5550f" name="CREDITS" role="doc" />
    <file baseinstalldir="/" md5sum="7291f1b05a4608bc9223993fd2bea6c2" name="EXPERIMENTAL" role="doc" />
    <file baseinstalldir="/" md5sum="cf40ac5fa27cc3ba0d44c44a455f9b64" name="LICENSE" role="doc" />
-   <file baseinstalldir="/" md5sum="a4046d357b19e731935545f18c51aa8b" name="mecab.c" role="src" />
+   <file baseinstalldir="/" md5sum="d147e60e70744a15427f6e6f12769e87" name="mecab.c" role="src" />
    <file baseinstalldir="/" md5sum="b6dbe2604c441ab1da89d85ba2a6bf16" name="mecab.dsp" role="src" />
    <file baseinstalldir="/" md5sum="29d93ae26dba92e4c71e0b88b1c5bc17" name="php_mecab.h" role="src" />
    <file baseinstalldir="/" md5sum="32ce0d2be96b4a03040c33c077226241" name="php_mecab_compat.h" role="src" />
