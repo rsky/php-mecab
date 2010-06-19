@@ -1,6 +1,6 @@
 <?php 
 /**
- * php_mecab/examples
+ * php-mecab/examples
  * show module dependencies, ini entries, constants, functions
  * and methods provided by mecab extension (use ReflectionExtension)
  * charset=utf-8

@@ -1,6 +1,6 @@
 <?php 
 /**
- * php_mecab/examples
+ * php-mecab/examples
  * dump all nodes
  * charset=utf-8
  */

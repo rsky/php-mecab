@@ -1,6 +1,6 @@
 <?php 
 /**
- * php_mecab/examples
+ * php-mecab/examples
  * get begen/end node list (OO-API)
  * charset=utf-8
  */

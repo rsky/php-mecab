@@ -1,6 +1,6 @@
 <?php 
 /**
- * php_mecab/examples
+ * php-mecab/examples
  * test like official bindings examples (OO-API)
  * charset=utf-8
  */

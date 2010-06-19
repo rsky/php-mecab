@@ -1,6 +1,6 @@
 <?php 
 /**
- * php_mecab/examples
+ * php-mecab/examples
  * show dictionary information (OO-API)
  * charset=utf-8
  */

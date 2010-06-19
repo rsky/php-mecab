@@ -1,6 +1,6 @@
 <?php 
 /**
- * php_mecab/examples
+ * php-mecab/examples
  * parse string (OO-API)
  * charset=utf-8
  */

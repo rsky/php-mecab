@@ -1,6 +1,6 @@
 <?php 
 /**
- * php_mecab/examples
+ * php-mecab/examples
  * split string into an array of part-of-speech (OO-API)
  * charset=utf-8
  */
