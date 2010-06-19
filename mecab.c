@@ -70,14 +70,6 @@ static zend_object_handlers php_mecab_path_object_handlers;
 static PHP_MINIT_FUNCTION(mecab);
 static PHP_MSHUTDOWN_FUNCTION(mecab);
 static PHP_MINFO_FUNCTION(mecab);
-
-#if ZEND_EXTENSION_API_NO < 220060519
-#define PHP_GINIT_FUNCTION(mecab) \
-	void php_mecab_init_globals(zend_mecab_globals *mecab_globals TSRMLS_DC)
-#define PHP_GSHUTDOWN_FUNCTION(mecab) \
-	void php_mecab_shutdown_globals(zend_mecab_globals *mecab_globals TSRMLS_DC)
-#endif
-
 static PHP_GINIT_FUNCTION(mecab);
 static PHP_GSHUTDOWN_FUNCTION(mecab);
 
@@ -693,23 +685,18 @@ static zend_function_entry mecab_functions[] = {
 
 /* {{{ cross-extension dependencies */
 
-#if ZEND_EXTENSION_API_NO >= 220050617
 static zend_module_dep mecab_deps[] = {
 	ZEND_MOD_REQUIRED("reflection")
 	ZEND_MOD_REQUIRED("spl")
 	{NULL, NULL, NULL, 0}
 };
-#endif
+
 /* }}} */
 
 /* {{{ mecab_module_entry */
 zend_module_entry mecab_module_entry = {
-#if ZEND_EXTENSION_API_NO >= 220050617
 	STANDARD_MODULE_HEADER_EX, NULL,
 	mecab_deps,
-#else
-	STANDARD_MODULE_HEADER,
-#endif
 	"mecab",
 	mecab_functions,
 	PHP_MINIT(mecab),
@@ -718,15 +705,11 @@ zend_module_entry mecab_module_entry = {
 	NULL,
 	PHP_MINFO(mecab),
 	PHP_MECAB_MODULE_VERSION,
-#if ZEND_EXTENSION_API_NO >= 220060519
 	PHP_MODULE_GLOBALS(mecab),
 	PHP_GINIT(mecab),
 	PHP_GSHUTDOWN(mecab),
 	NULL,
 	STANDARD_MODULE_PROPERTIES_EX
-#else
-	STANDARD_MODULE_PROPERTIES
-#endif
 };
 /* }}} */
 
@@ -750,10 +733,6 @@ PHP_INI_END()
 /* {{{ PHP_MINIT_FUNCTION */
 static PHP_MINIT_FUNCTION(mecab)
 {
-#if ZEND_EXTENSION_API_NO < 220060519
-	ZEND_INIT_MODULE_GLOBALS(mecab, php_mecab_init_globals, php_mecab_shutdown_globals)
-#endif
-
 	REGISTER_INI_ENTRIES();
 
 	REGISTER_STRING_CONSTANT("MECAB_VERSION", (char *)mecab_version(), CONST_PERSISTENT | CONST_CS);
@@ -872,9 +851,6 @@ static PHP_MINIT_FUNCTION(mecab)
 static PHP_MSHUTDOWN_FUNCTION(mecab)
 {
 	UNREGISTER_INI_ENTRIES();
-#if ZEND_EXTENSION_API_NO < 220060519 && !defined(ZTS)
-	php_mecab_shutdown_globals(&mecab_globals TSRMLS_CC);
-#endif
 	return SUCCESS;
 }
 /* }}} */
