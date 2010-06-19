@@ -1575,12 +1575,23 @@ php_mecab_node_list_method(INTERNAL_FUNCTION_PARAMETERS, zend_bool end)
 	php_mecab_node *newnode = NULL;
 	const mecab_node_t *newptr = NULL;
 
+#if PHP_VERSION_ID >= 50300
+	zend_error_handling error_handling;
+
+	zend_replace_error_handling(EH_THROW, ext_ce_InvalidArgumentException, &error_handling TSRMLS_CC);
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &index) == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+#else
 	php_set_error_handling(EH_THROW, ext_ce_InvalidArgumentException TSRMLS_CC);
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &index) == FAILURE) {
 		php_std_error_handling();
 		return;
 	}
 	php_std_error_handling();
+#endif
 
 	intern = (php_mecab_node_object *)zend_object_store_get_object(getThis() TSRMLS_CC);
 	xnode = intern->ptr;
@@ -1783,7 +1794,6 @@ php_mecab_get_class_entry(char *name, uint length TSRMLS_DC)
 	}
 }
 /* }}} */
-#endif
 
 /* {{{ php_mecab_node_list_method()
  * check file/dicectory accessibility
@@ -2164,7 +2174,6 @@ static PHP_FUNCTION(mecab_split)
 					break;
 				  case ATTR_ALL:
 				  default:
-#endif
 					MAKE_STD_ZVAL(arg0);
 					array_init(arg0);
 
@@ -3969,12 +3978,23 @@ static PHP_METHOD(MeCab_Node, setTraverse)
 	php_mecab_node_object *intern;
 	long traverse = 0;
 
+#if PHP_VERSION_ID >= 50300
+	zend_error_handling error_handling;
+
+	zend_replace_error_handling(EH_THROW, ext_ce_InvalidArgumentException, &error_handling TSRMLS_CC);
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &traverse) == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+#else
 	php_set_error_handling(EH_THROW, ext_ce_InvalidArgumentException TSRMLS_CC);
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &traverse) == FAILURE) {
 		php_std_error_handling();
 		return;
 	}
 	php_std_error_handling();
+#endif
 
 	intern = (php_mecab_node_object *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
