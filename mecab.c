@@ -305,7 +305,7 @@ php_mecab_free_persistent(mecab_t **mecab_ptr_ptr);
 
 /* {{{ argument informations */
 
-#if !defined(PHP_VERSION_ID) || PHP_VERSION_ID < 50300
+#if PHP_VERSION_ID < 50300
 #define ARG_INFO_STATIC static
 #else
 #define ARG_INFO_STATIC
@@ -1809,14 +1809,12 @@ php_mecab_check_path(const char *path, size_t length, char *real_path TSRMLS_DC)
 		return 0;
 	}
 
-#if !defined(PHP_VERSION_ID) || PHP_VERSION_ID < 60000
 	if (PG(safe_mode) && !php_checkuid(full_path, NULL, CHECKUID_CHECK_FILE_AND_DIR)) {
 		if (real_path == NULL) {
 			efree(full_path);
 		}
 		return 0;
 	}
-#endif
 
 	if (real_path == NULL) {
 		efree(full_path);

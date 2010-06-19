@@ -73,7 +73,7 @@ extern "C" {
 
 #define FREE_RESOURCE(resource) zend_list_delete(Z_RESVAL_P(resource))
 
-#if defined(PHP_VERSION_ID) && PHP_VERSION_ID >= 50300
+#if PHP_VERSION_ID >= 50300
 #define IS_CALLABLE_TSRMLS_CC TSRMLS_CC
 #else
 #define IS_CALLABLE_TSRMLS_CC
