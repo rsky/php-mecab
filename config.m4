@@ -16,6 +16,21 @@ if test "$PHP_MECAB" != "no"; then
   fi
 
   dnl
+  dnl Check PHP version
+  dnl
+  export OLD_CPPFLAGS="$CPPFLAGS"
+  export CPPFLAGS="$CPPFLAGS $INCLUDES"
+  AC_MSG_CHECKING([PHP version])
+  AC_TRY_COMPILE([#include <php_version.h>], [
+#if !defined(PHP_VERSION_ID) || PHP_VERSION_ID < 50200
+#error this extension requires at least PHP version 5.2.0
+#endif
+],
+    [AC_MSG_RESULT([ok])],
+    [AC_MSG_ERROR([need at least PHP 5.2.0])])
+  export CPPFLAGS="$OLD_CPPFLAGS"
+
+  dnl
   dnl Check the location of mecab-config
   dnl
   if test "$PHP_MECAB" != "yes"; then
