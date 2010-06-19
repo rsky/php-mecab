@@ -30,9 +30,6 @@
 
 #include "php_mecab.h"
 #include "php_mecab_compat.h"
-#ifdef IS_UNICODE
-#include "onupdateencoding.h"
-#endif
 
 #define PATHBUFSIZE (MAXPATHLEN + 3)
 
@@ -46,7 +43,6 @@ static int le_mecab_path;
 
 /* }}} */
 
-#ifdef ZEND_ENGINE_2
 /* {{{ class entries */
 
 static zend_class_entry *ext_ce_Iterator;
@@ -68,7 +64,6 @@ static zend_object_handlers php_mecab_node_object_handlers;
 static zend_object_handlers php_mecab_path_object_handlers;
 
 /* }}} */
-#endif
 
 /* {{{ module function prototypes */
 
@@ -92,11 +87,6 @@ static PHP_GSHUTDOWN_FUNCTION(mecab);
 
 /* Get MeCab library version */
 static PHP_FUNCTION(mecab_version);
-#ifdef IS_UNICODE
-/* Unicode configuration functions */
-static PHP_FUNCTION(mecab_get_encoding);
-static PHP_FUNCTION(mecab_set_encoding);
-#endif
 /* Wakati-Gaki function */
 static PHP_FUNCTION(mecab_split);
 /* MeCab API wrappers */
@@ -161,7 +151,6 @@ static PHP_FUNCTION(mecab_path_cost);
 
 /* {{{ PHP method prototypes */
 
-#ifdef ZEND_ENGINE_2
 static PHP_METHOD(MeCab_Node, __construct);
 static PHP_METHOD(MeCab_Path, __construct);
 /* Overloading implementations for mecab_node */
@@ -182,7 +171,6 @@ static PHP_METHOD(MeCab_NodeIterator, next);
 /* Overloading implementations for mecab_path */
 static PHP_METHOD(MeCab_Path, __get);
 static PHP_METHOD(MeCab_Path, __isset);
-#endif
 
 /* }}} */
 
@@ -263,8 +251,6 @@ php_mecab_path_get_node_wrapper(INTERNAL_FUNCTION_PARAMETERS, php_mecab_path_rel
 static void
 php_mecab_node_list_func(INTERNAL_FUNCTION_PARAMETERS, zend_bool end);
 
-#ifdef ZEND_ENGINE_2
-
 /* get begin/end node list object from mecab_node */
 static void
 php_mecab_node_list_method(INTERNAL_FUNCTION_PARAMETERS, zend_bool end);
@@ -302,7 +288,6 @@ static zend_class_entry *
 php_mecab_get_class_entry(char *name, uint length TSRMLS_DC);
 
 /* }}} */
-#endif /* ZEND_ENGINE_2 */
 
 /* check file/dicectory accessibility */
 static zend_bool
@@ -316,36 +301,9 @@ php_mecab_register_persistent(char *dicdir_buf TSRMLS_DC);
 static void
 php_mecab_free_persistent(mecab_t **mecab_ptr_ptr);
 
-#ifdef IS_UNICODE
-/* merge checker function */
-static int
-php_mecab_merge_check(HashTable *options_ht, zval **data, zend_hash_key *hash_key, UConverter *conv);
-
-/* add string to array with key */
-static inline int
-_pm_add_assoc_stringl_ex(zval *arg, const char *key, int key_len, const char *str, int str_len, int flags TSRMLS_DC)
-{
-	zval *value;
-	MAKE_STD_ZVAL(value);
-	ZVAL_U_STRINGL(MECAB_G(conv), value, str, str_len, flags);
-	return add_ascii_assoc_zval_ex(arg, key, key_len, value);
-}
-
-/* add string to array */
-static inline int
-_pm_add_next_index_stringl(zval *arg, const char *str, int str_len, int flags TSRMLS_DC)
-{
-	zval *value;
-	MAKE_STD_ZVAL(value);
-	ZVAL_U_STRINGL(MECAB_G(conv), value, str, str_len, flags);
-	return add_next_index_zval(arg, value);
-}
-#endif
-
 /* }}} */
 
 /* {{{ argument informations */
-#ifdef ZEND_BEGIN_ARG_INFO
 
 #if !defined(PHP_VERSION_ID) || PHP_VERSION_ID < 50300
 #define ARG_INFO_STATIC static
@@ -357,13 +315,6 @@ ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab__mecab, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
 	ZEND_ARG_INFO(0, mecab)
 ZEND_END_ARG_INFO()
-
-#ifdef IS_UNICODE
-ARG_INFO_STATIC
-ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_set_encoding, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-	ZEND_ARG_INFO(0, encoding)
-ZEND_END_ARG_INFO()
-#endif
 
 ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_split, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
@@ -548,40 +499,7 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab__magic_getter, ZEND_SEND_BY_VAL, ZEND_RETUR
 	ZEND_ARG_INFO(0, name)
 ZEND_END_ARG_INFO()
 
-#else /* ZEND_BEGIN_ARG_INFO */
-
-#define arginfo_mecab__mecab NULL
-#define arginfo_mecab_set_encoding NULL
-#define arginfo_mecab_split NULL
-#define arginfo_mecab_new NULL
-#if PHP_MECAB_VERSION_NUMBER >= 97
-#define arginfo_mecab_set_partial NULL
-#define arginfo_mecab_set_theta NULL
-#define arginfo_mecab_set_lattice_level NULL
-#define arginfo_mecab_set_all_morphs NULL
-#endif /* MeCab 0.97 or later */
-#define arginfo_mecab_sparse_tostr NULL
-#define arginfo_mecab_sparse_tonode NULL
-#define arginfo_mecab_nbest_sparse_tostr NULL
-#define arginfo_mecab_nbest_init NULL
-#define arginfo_mecab_nbest_next_tostr NULL
-#define arginfo_mecab_format_node NULL
-#define arginfo_mecab_node__node NULL
-#define arginfo_mecab_node_toarray NULL
-#define arginfo_mecab_node__list NULL
-#define arginfo_mecab_path__path NULL
-
-#endif /* ZEND_BEGIN_ARG_INFO */
 /* }}} arginfo */
-
-#ifdef ZEND_ENGINE_2
-
-/* redefine PHP_ME_MAPPING macro */
-#if (PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION < 2)
-#undef PHP_ME_MAPPING
-#define PHP_ME_MAPPING(name, func_name, arg_types, flags) \
-	ZEND_FENTRY(name, ZEND_FN(func_name), arg_types, flags)
-#endif
 
 /* {{{ MeCab methods[] */
 #define PM_TAGGER_ME_MAPPING(methname, funcname) \
@@ -593,10 +511,6 @@ ZEND_END_ARG_INFO()
 static zend_function_entry mecab_methods[] = {
 	/* MeCab API wrappers */
 	PHP_ME_MAPPING(version, mecab_version, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-#ifdef IS_UNICODE
-	PHP_ME_MAPPING(getEncoding, mecab_get_encoding, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-	PHP_ME_MAPPING(setEncoding, mecab_set_encoding, arginfo_mecab_set_encoding, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-#endif
 	PHP_ME_MAPPING(split,       mecab_split, arginfo_mecab_split, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
 	PHP_ME_MAPPING(__construct, mecab_new,   arginfo_mecab_new,   ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
 #if PHP_MECAB_VERSION_NUMBER >= 97
@@ -704,7 +618,6 @@ static zend_function_entry mecab_path_methods[] = {
 };
 /* }}} methods */
 
-#endif /* ZEND_ENGINE_2 */
 /* }}} class definitions */
 
 /* {{{ mecab_functions[] */
@@ -715,11 +628,6 @@ static zend_function_entry mecab_path_methods[] = {
 static zend_function_entry mecab_functions[] = {
 	/* Get MeCab library version */
 	PHP_FE(mecab_version, NULL)
-#ifdef IS_UNICODE
-	/* Unicode configuration functions */
-	PHP_FE(mecab_get_encoding, NULL)
-	PHP_FE(mecab_set_encoding, arginfo_mecab_set_encoding)
-#endif
 	/* Wakati-Gaki function */
 	PHP_FE(mecab_split, arginfo_mecab_split)
 	/* MeCab API wrappers */
@@ -835,10 +743,6 @@ PHP_INI_BEGIN()
 		OnUpdateString, default_dicdir, zend_mecab_globals, mecab_globals)
 	STD_PHP_INI_ENTRY("mecab.default_userdic", "", PHP_INI_ALL,
 		OnUpdateString, default_userdic, zend_mecab_globals, mecab_globals)
-#ifdef IS_UNICODE
-	STD_PHP_INI_ENTRY("mecab.internal_encoding", "UTF-8", PHP_INI_ALL,
-		PmOnUpdateEncoding, conv, zend_mecab_globals, mecab_globals)
-#endif
 PHP_INI_END()
 
 /* }}} */
@@ -871,7 +775,6 @@ static PHP_MINIT_FUNCTION(mecab)
 	le_mecab_path = zend_register_list_destructors_ex(
 			php_mecab_path_free_resource, NULL, "mecab_path", module_number);
 
-#ifdef ZEND_ENGINE_2
 #define PHP_MECAB_GET_CE(ce, lcname) \
 	(ce = php_mecab_get_class_entry(lcname, sizeof(lcname) - 1 TSRMLS_CC))
 	if (PHP_MECAB_GET_CE(ext_ce_Iterator, "iterator") == NULL ||
@@ -960,7 +863,6 @@ static PHP_MINIT_FUNCTION(mecab)
 		memcpy(&php_mecab_path_object_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 		php_mecab_path_object_handlers.clone_obj = NULL;
 	}
-#endif
 
 	return SUCCESS;
 }
@@ -1000,9 +902,6 @@ static PHP_GINIT_FUNCTION(mecab)
 	mecab_globals->default_rcfile = NULL;
 	mecab_globals->default_dicdir = NULL;
 	mecab_globals->default_userdic = NULL;
-#ifdef IS_UNICODE
-	mecab_globals->conv = NULL;
-#endif
 	zend_hash_init(&mecab_globals->persistents, 10, NULL, (dtor_func_t)php_mecab_free_persistent, 1);
 #ifdef ZTS
 	mecab_globals->mutexp = tsrm_mutex_alloc();
@@ -1090,8 +989,6 @@ php_mecab_set_string(php_mecab *mecab, const char *str, int len TSRMLS_DC)
 }
 /* }}} */
 
-#ifdef ZEND_ENGINE_2
-
 /* {{{ php_mecab_object_new()
  * allocate for mecab object
  */
@@ -1131,7 +1028,6 @@ php_mecab_free_object_storage(void *object TSRMLS_DC)
 }
 /* }}} */
 
-#endif /* ZEND_ENGINE_2 */
 /* }}} mecab_t */
 
 /* {{{ internal function implementation for mecab_node_t */
@@ -1197,8 +1093,6 @@ php_mecab_node_set_tagger(php_mecab_node *node, php_mecab *mecab TSRMLS_DC)
 }
 /* }}} */
 
-#ifdef ZEND_ENGINE_2
-
 /* {{{ php_mecab_node_object_new()
  * allocate for mecab_node object
  */
@@ -1239,7 +1133,6 @@ php_mecab_node_free_object_storage(void *object TSRMLS_DC)
 }
 /* }}} */
 
-#endif /* ZEND_ENGINE_2 */
 /* }}} mecab_node_t */
 
 /* {{{ php_mecab_path_ctor()
@@ -1303,8 +1196,6 @@ php_mecab_path_set_tagger(php_mecab_path *path, php_mecab *mecab TSRMLS_DC)
 }
 /* }}} */
 
-#ifdef ZEND_ENGINE_2
-
 /* {{{ php_mecab_path_object_new()
  * allocate for mecab_path object
  */
@@ -1344,7 +1235,6 @@ php_mecab_path_free_object_storage(void *object TSRMLS_DC)
 }
 /* }}} */
 
-#endif /* ZEND_ENGINE_2 */
 /* }}} mecab_path_t */
 
 /* {{{ php_mecab_node_get_sibling()
@@ -1386,12 +1276,10 @@ php_mecab_node_get_sibling(zval *zv, zval *object, php_mecab_node *xnode, php_me
 
 	/* set return value */
 	if (object) {
-#ifdef ZEND_ENGINE_2
 		php_mecab_node_object *newobj;
 		object_init_ex(retval, ce_MeCab_Node);
 		PHP_MECAB_FETCH_OBJECT(newobj, php_mecab_node_object *, retval);
 		xsbl = newobj->ptr;
-#endif
 	} else {
 		xsbl = php_mecab_node_ctor(TSRMLS_C);
 		ZEND_REGISTER_RESOURCE(retval, xsbl, le_mecab_node);
@@ -1438,12 +1326,10 @@ php_mecab_node_get_path(zval *zv, zval *object, php_mecab_node *xnode, php_mecab
 
 	/* set return value */
 	if (object) {
-#ifdef ZEND_ENGINE_2
 		php_mecab_path_object *newobj;
 		object_init_ex(retval, ce_MeCab_Path);
 		PHP_MECAB_FETCH_OBJECT(newobj, php_mecab_path_object *, retval);
 		xpath = newobj->ptr;
-#endif
 	} else {
 		xpath = php_mecab_path_ctor(TSRMLS_C);
 		ZEND_REGISTER_RESOURCE(retval, xpath, le_mecab_path);
@@ -1490,12 +1376,10 @@ php_mecab_path_get_sibling(zval *zv, zval *object, php_mecab_path *xpath, php_me
 
 	/* set return value */
 	if (object) {
-#ifdef ZEND_ENGINE_2
 		php_mecab_path_object *newobj;
 		object_init_ex(retval, ce_MeCab_Path);
 		PHP_MECAB_FETCH_OBJECT(newobj, php_mecab_path_object *, retval);
 		xsbl = newobj->ptr;
-#endif
 	} else {
 		xsbl = php_mecab_path_ctor(TSRMLS_C);
 		ZEND_REGISTER_RESOURCE(retval, xsbl, le_mecab_path);
@@ -1542,12 +1426,10 @@ php_mecab_path_get_node(zval *zv, zval *object, php_mecab_path *xpath, php_mecab
 
 	/* set return value */
 	if (object) {
-#ifdef ZEND_ENGINE_2
 		php_mecab_node_object *newobj;
 		object_init_ex(retval, ce_MeCab_Node);
 		PHP_MECAB_FETCH_OBJECT(newobj, php_mecab_node_object *, retval);
 		xnode = newobj->ptr;
-#endif
 	} else {
 		xnode = php_mecab_node_ctor(TSRMLS_C);
 		ZEND_REGISTER_RESOURCE(retval, xnode, le_mecab_node);
@@ -1678,7 +1560,6 @@ php_mecab_node_list_func(INTERNAL_FUNCTION_PARAMETERS, zend_bool end)
 	ZEND_REGISTER_RESOURCE(return_value, newnode, le_mecab_node);
 }
 
-#ifdef ZEND_ENGINE_2
 /* {{{ php_mecab_node_list_method()
  * get begin/end node list object from mecab_node
  */
@@ -1895,7 +1776,7 @@ php_mecab_get_class_entry(char *name, uint length TSRMLS_DC)
 {
 	zend_class_entry **pce;
 
-	if (pm_hash_find(CG(class_table), name, length + 1, (void **)&pce) == SUCCESS) {
+	if (zend_hash_find(CG(class_table), name, length + 1, (void **)&pce) == SUCCESS) {
 		return *pce;
 	} else {
 		return NULL;
@@ -2074,33 +1955,6 @@ php_mecab_check_option(const char *option)
 	path_expected = 0; \
 }
 
-#ifdef IS_UNICODE
-/* merge checker function */
-static int
-php_mecab_merge_check(HashTable *options_ht, zval **data, zend_hash_key *hash_key, UConverter *conv)
-{
-	if (hash_key->type == IS_UNICODE) {
-		char *key = NULL;
-		int length;
-		UErrorCode status = U_ZERO_ERROR;
-
-		zend_unicode_to_string_ex(conv, &key, &length, hash_key->arKey.u, hash_key->nKeyLength - 1, &status);
-		if (!U_FAILURE(status)) {
-			if (zend_u_hash_add(options_ht, IS_STRING, ZSTR(key), length + 1, data, sizeof(zval *), NULL) == SUCCESS) {
-				Z_ADDREF_PP(data);
-			}
-		}
-
-		if (key != NULL) {
-			efree(key);
-		}
-
-		return 0;
-	}
-
-	return 1;
-}
-#endif
 /* }}} */
 
 /* {{{ Functions */
@@ -2118,75 +1972,9 @@ static PHP_FUNCTION(mecab_version)
 	if (ZEND_NUM_ARGS() != 0) {
 		WRONG_PARAM_COUNT;
 	}
-#ifdef IS_UNICODE
-	{
-		const char *version = mecab_version();
-		RETURN_ASCII_STRING(version, ZSTR_DUPLICATE);
-	}
-#else
 	RETURN_STRING((char *)mecab_version(), 1);
-#endif
 }
 /* }}} mecab_version */
-
-#ifdef IS_UNICODE
-/* {{{ proto string mecab_get_encoding() */
-/**
- * string mecab_get_encoding(void)
- * string MeCab_Tagger::getEncoding(void)
- *
- * Get Unicode converter encoding.
- *
- * @return	string
- */
-static PHP_FUNCTION(mecab_get_encoding)
-{
-	const char *encoding;
-	UErrorCode status = U_ZERO_ERROR;
-
-	if (ZEND_NUM_ARGS() != 0) {
-		WRONG_PARAM_COUNT;
-	}
-
-	encoding = ucnv_getName(MECAB_G(conv), &status);
-	if (U_FAILURE(status)) {
-		php_error_docref(NULL TSRMLS_CC, E_WARNING, "%s", u_errorName(status));
-		RETURN_FALSE;
-	}
-
-	RETURN_ASCII_STRING(encoding, ZSTR_DUPLICATE);
-}
-/* mecab_get_encoding */
-
-/* {{{ proto bool mecab_set_encoding(string encoding) */
-/**
- * bool mecab_set_encoding(string encoding)
- * bool MeCab_Tagger::setEncoding(string encoding)
- *
- * Set Unicode converter encoding.
- *
- * @param	string	$encoding	The new encoding name.
- * @return	bool
- * @throws  InvalidArgumentException
- */
-static PHP_FUNCTION(mecab_set_encoding)
-{
-	const char *encoding;
-	int encoding_len;
-
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s&", &encoding, &encoding_len, UG(ascii_conv)) == FAILURE) {
-		return;
-	}
-
-	if (pm_set_converter_encoding(&MECAB_G(conv), encoding) == FAILURE) {
-		zend_throw_exception(ext_ce_InvalidArgumentException, "Invalid encoding name given", 0 TSRMLS_CC);
-		RETURN_FALSE;
-	}
-
-	RETURN_TRUE;
-}
-/* mecab_set_encoding */
-#endif
 
 /* {{{ proto array mecab_split(string str[, string dicdir[, string userdic[, callback filter[, bool persistent]]]]) */
 /**
@@ -2224,23 +2012,12 @@ static PHP_FUNCTION(mecab_split)
 	char *userdic_buf = &(pathbuf[1][0]);
 
 	/* parse arguments */
-#ifdef IS_UNICODE
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s&|s!&s!&z/b",
-			&str, &str_len, MECAB_G(conv),
-			&dicdir, &dicdir_len, ZEND_U_CONVERTER(UG(filesystem_encoding_conv)),
-			&userdic, &userdic_len, ZEND_U_CONVERTER(UG(filesystem_encoding_conv)),
-			&filter, &persistent) == FAILURE)
-	{
-		return;
-	}
-#else
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|s!s!z/b",
 			&str, &str_len, &dicdir, &dicdir_len, &userdic, &userdic_len,
 			&filter, &persistent) == FAILURE)
 	{
 		return;
 	}
-#endif
 
 	/* check for callback */
 	if (filter != NULL) {
@@ -2310,15 +2087,12 @@ static PHP_FUNCTION(mecab_split)
 
 	/* initialize */
 	array_init(return_value);
-#ifdef IS_UNICODE
-	Z_ARRVAL_P(return_value)->unicode = UG(unicode);
-#endif
 
 	/* put surfaces of each node to return value */
 	if (filter == NULL) {
 		while (node != NULL) {
 			if (node->length > 0) {
-				pm_add_next_index_stringl(return_value, (char *)node->surface, (int)node->length, 1);
+				add_next_index_stringl(return_value, (char *)node->surface, (int)node->length, 1);
 			}
 			node = node->next;
 		}
@@ -2328,29 +2102,18 @@ static PHP_FUNCTION(mecab_split)
 				zval **argv[] = { NULL };
 				zval *arg0 = NULL;
 				zval *retval = NULL;
-#ifdef ZEND_ENGINE_2
 				php_mecab_node_attribute type = 0;
-#endif
 
 				MAKE_STD_ZVAL(arg0);
 
-#ifdef ZEND_ENGINE_2
 				type = php_mecab_get_required_attribute(filter TSRMLS_CC);
 
 				switch (type) {
 				  case ATTR_SURFACE:
-#ifdef IS_UNICODE
-					ZVAL_U_STRINGL(MECAB_G(conv), arg0, node->surface, (int)node->length, ZSTR_DUPLICATE);
-#else
 					ZVAL_STRINGL(arg0, (char *)node->surface, (int)node->length, 1);
-#endif
 					break;
 				  case ATTR_FEATURE:
-#ifdef IS_UNICODE
-					ZVAL_U_STRING(MECAB_G(conv), arg0, node->feature, ZSTR_DUPLICATE);
-#else
 					ZVAL_STRING(arg0, (char *)node->feature, 1);
-#endif
 					break;
 				  case ATTR_ID:
 					ZVAL_LONG(arg0, (long)node->id);
@@ -2406,34 +2169,29 @@ static PHP_FUNCTION(mecab_split)
 #endif
 					MAKE_STD_ZVAL(arg0);
 					array_init(arg0);
-#ifdef IS_UNICODE
-					Z_ARRVAL_P(arg0)->unicode = UG(unicode);
-#endif
 
-					pm_add_assoc_stringl(arg0, "surface", (char *)node->surface, (int)node->length, 1);
-					pm_add_assoc_string(arg0,  "feature", (char *)node->feature, 1);
-					pm_add_assoc_long(arg0, "id",         (long)node->id);
-					pm_add_assoc_long(arg0, "length",     (long)node->length);
-					pm_add_assoc_long(arg0, "rlength",    (long)node->rlength);
-					pm_add_assoc_long(arg0, "rcAttr",     (long)node->rcAttr);
-					pm_add_assoc_long(arg0, "lcAttr",     (long)node->lcAttr);
-					pm_add_assoc_long(arg0, "posid",      (long)node->posid);
-					pm_add_assoc_long(arg0, "char_type",  (long)node->char_type);
-					pm_add_assoc_long(arg0, "stat",       (long)node->stat);
-					/*pm_add_assoc_bool(arg0, "isbest",     (long)node->isbest);
+					add_assoc_stringl(arg0, "surface", (char *)node->surface, (int)node->length, 1);
+					add_assoc_string(arg0,  "feature", (char *)node->feature, 1);
+					add_assoc_long(arg0, "id",         (long)node->id);
+					add_assoc_long(arg0, "length",     (long)node->length);
+					add_assoc_long(arg0, "rlength",    (long)node->rlength);
+					add_assoc_long(arg0, "rcAttr",     (long)node->rcAttr);
+					add_assoc_long(arg0, "lcAttr",     (long)node->lcAttr);
+					add_assoc_long(arg0, "posid",      (long)node->posid);
+					add_assoc_long(arg0, "char_type",  (long)node->char_type);
+					add_assoc_long(arg0, "stat",       (long)node->stat);
+					/*add_assoc_bool(arg0, "isbest",     (long)node->isbest);
 					if (node->stat == MECAB_BOS_NODE) {
-						pm_add_assoc_long(arg0, "sentence_length", (long)node->sentence_length);
+						add_assoc_long(arg0, "sentence_length", (long)node->sentence_length);
 					} else {
-						pm_add_assoc_null(arg0, "sentence_length");
+						add_assoc_null(arg0, "sentence_length");
 					}
-					pm_add_assoc_double(arg0, "alpha", (double)node->alpha);
-					pm_add_assoc_double(arg0, "beta",  (double)node->beta);
-					pm_add_assoc_double(arg0, "prob",  (double)node->prob);*/
-					pm_add_assoc_long(arg0,   "wcost", (long)node->wcost);
-					pm_add_assoc_long(arg0,   "cost",  (long)node->cost);
-#ifdef ZEND_ENGINE_2
+					add_assoc_double(arg0, "alpha", (double)node->alpha);
+					add_assoc_double(arg0, "beta",  (double)node->beta);
+					add_assoc_double(arg0, "prob",  (double)node->prob);*/
+					add_assoc_long(arg0,   "wcost", (long)node->wcost);
+					add_assoc_long(arg0,   "cost",  (long)node->cost);
 				}
-#endif
 
 				argv[0] = &arg0;
 
@@ -2442,7 +2200,7 @@ static PHP_FUNCTION(mecab_split)
 				{
 					convert_to_boolean(retval);
 					if (Z_BVAL_P(retval) == 1) {
-						pm_add_next_index_stringl(return_value, (char *)node->surface, (int)node->length, 1);
+						add_next_index_stringl(return_value, (char *)node->surface, (int)node->length, 1);
 					}
 					zval_ptr_dtor(&retval);
 				}
@@ -2505,25 +2263,15 @@ static PHP_FUNCTION(mecab_new)
 	/* parse options */
 	if (zoptions != NULL) {
 		int getopt_result = 0;
-#ifdef IS_UNICODE
-		zstr key;
-#else
 		char *key;
-#endif
 		uint len;
 		ulong idx;
 		zval **entry;
 
 		ALLOC_HASHTABLE(options);
 
-#ifdef IS_UNICODE
-		zend_u_hash_init(options, zend_hash_num_elements(Z_ARRVAL_P(zoptions)), NULL, ZVAL_PTR_DTOR, 0, 0);
-		zend_hash_merge_ex(options, Z_ARRVAL_P(zoptions), (copy_ctor_func_t)zval_add_ref, sizeof(zval *),
-				(merge_checker_func_t)php_mecab_merge_check, (void *)ZEND_U_CONVERTER(UG(runtime_encoding_conv)));
-#else
 		zend_hash_init(options, zend_hash_num_elements(Z_ARRVAL_P(zoptions)), NULL, ZVAL_PTR_DTOR, 0);
 		zend_hash_copy(options, Z_ARRVAL_P(zoptions), (copy_ctor_func_t)zval_add_ref, NULL, sizeof(zval *));
-#endif
 
 		argv = (char **)ecalloc(2 * zend_hash_num_elements(options) + min_argc, sizeof(char *));
 
@@ -2532,17 +2280,9 @@ static PHP_FUNCTION(mecab_new)
 
 			switch (zend_hash_get_current_key(options, &key, &idx, 0)) {
 			  case HASH_KEY_IS_STRING:
-#ifdef IS_UNICODE
-				getopt_result = php_mecab_check_option(key.s);
-#else
 				getopt_result = php_mecab_check_option(key);
-#endif
 				if (getopt_result == FAILURE) {
-#ifdef IS_UNICODE
-					php_error_docref(NULL TSRMLS_CC, E_WARNING, "Invalid option '%s' given", key.s);
-#else
 					php_error_docref(NULL TSRMLS_CC, E_WARNING, "Invalid option '%s' given", key);
-#endif
 					efree(argv);
 					RETURN_FALSE;
 				} else {
@@ -2556,11 +2296,7 @@ static PHP_FUNCTION(mecab_new)
 						resolved_path = userdic_buf;
 					}
 				}
-#ifdef IS_UNICODE
-				argv[argc++] = key.s;
-#else
 				argv[argc++] = key;
-#endif
 				if (path_expected) {
 					PHP_MECAB_CHECK_FILE(Z_STRVAL_PP(entry), Z_STRLEN_PP(entry));
 					argv[argc++] = resolved_path;
@@ -2655,7 +2391,6 @@ static PHP_FUNCTION(mecab_new)
 	}
 
 	if (object) {
-#ifdef ZEND_ENGINE_2
 		php_mecab_object *intern;
 		PHP_MECAB_FETCH_OBJECT(intern, php_mecab_object *, object);
 		xmecab = intern->ptr;
@@ -2665,7 +2400,6 @@ static PHP_FUNCTION(mecab_new)
 					"MeCab already initialized", 0 TSRMLS_CC);
 			return;
 		}
-#endif
 	} else {
 		xmecab = php_mecab_ctor(TSRMLS_C);
 		ZEND_REGISTER_RESOURCE(return_value, xmecab, le_mecab);
@@ -2953,11 +2687,7 @@ static PHP_FUNCTION(mecab_sparse_tostr)
 	zend_bool ostr_free = 0;
 
 	/* parse the arguments */
-#ifdef IS_UNICODE
-	PHP_MECAB_PARSE_PARAMETERS("s&|ll", &str, &str_len, MECAB_G(conv), &len, &olen);
-#else
 	PHP_MECAB_PARSE_PARAMETERS("s|ll", &str, &str_len, &len, &olen);
-#endif
 
 	/* call mecab_sparse_tostr() */
 	php_mecab_set_string(xmecab, str, str_len TSRMLS_CC);
@@ -2975,11 +2705,7 @@ static PHP_FUNCTION(mecab_sparse_tostr)
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "%s", mecab_strerror(mecab));
 		RETVAL_FALSE;
 	} else {
-#ifdef IS_UNICODE
-		RETVAL_U_STRING(MECAB_G(conv), ostr, ZSTR_DUPLICATE);
-#else
 		RETVAL_STRING(ostr, 1);
-#endif
 	}
 
 	/* free */
@@ -3020,11 +2746,7 @@ static PHP_FUNCTION(mecab_sparse_tonode)
 	php_mecab_node *xnode = NULL;
 
 	/* parse the arguments */
-#ifdef IS_UNICODE
-	PHP_MECAB_PARSE_PARAMETERS("s&|l", &str, &str_len, MECAB_G(conv), &len);
-#else
 	PHP_MECAB_PARSE_PARAMETERS("s|l", &str, &str_len, &len);
-#endif
 
 	/* call mecab_sparse_tonode() */
 	php_mecab_set_string(xmecab, str, str_len TSRMLS_CC);
@@ -3037,12 +2759,10 @@ static PHP_FUNCTION(mecab_sparse_tonode)
 
 	/* set return value */
 	if (object) {
-#ifdef ZEND_ENGINE_2
 		php_mecab_node_object *newobj;
 		object_init_ex(return_value, ce_MeCab_Node);
 		PHP_MECAB_FETCH_OBJECT(newobj, php_mecab_node_object *, return_value);
 		xnode = newobj->ptr;
-#endif
 	} else {
 		xnode = php_mecab_node_ctor(TSRMLS_C);
 		ZEND_REGISTER_RESOURCE(return_value, xnode, le_mecab_node);
@@ -3088,11 +2808,7 @@ static PHP_FUNCTION(mecab_nbest_sparse_tostr)
 	zend_bool ostr_free = 1;
 
 	/* parse the arguments */
-#ifdef IS_UNICODE
-	PHP_MECAB_PARSE_PARAMETERS("ls&|ll", &n, &str, &str_len, MECAB_G(conv), &len, &olen);
-#else
 	PHP_MECAB_PARSE_PARAMETERS("ls|ll", &n, &str, &str_len, &len, &olen);
-#endif
 
 	/* call mecab_nbest_sparse_tostr() */
 	php_mecab_set_string(xmecab, str, str_len TSRMLS_CC);
@@ -3110,11 +2826,7 @@ static PHP_FUNCTION(mecab_nbest_sparse_tostr)
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "%s", mecab_strerror(mecab));
 		RETVAL_FALSE;
 	} else {
-#ifdef IS_UNICODE
-		RETVAL_U_STRING(MECAB_G(conv), ostr, ZSTR_DUPLICATE);
-#else
 		RETVAL_STRING(ostr, 1);
-#endif
 	}
 
 	/* free */
@@ -3154,11 +2866,7 @@ static PHP_FUNCTION(mecab_nbest_init)
 	int result = 0;
 
 	/* parse the arguments */
-#ifdef IS_UNICODE
-	PHP_MECAB_PARSE_PARAMETERS("s&|l", &str, &str_len, MECAB_G(conv), &len);
-#else
 	PHP_MECAB_PARSE_PARAMETERS("s|l", &str, &str_len, &len);
-#endif
 
 	/* call mecab_nbest_init() */
 	php_mecab_set_string(xmecab, str, str_len TSRMLS_CC);
@@ -3222,11 +2930,7 @@ static PHP_FUNCTION(mecab_nbest_next_tostr)
 		}
 		RETVAL_FALSE;
 	} else {
-#ifdef IS_UNICODE
-		RETVAL_U_STRING(MECAB_G(conv), ostr, ZSTR_DUPLICATE);
-#else
 		RETVAL_STRING(ostr, 1);
-#endif
 	}
 
 	/* free */
@@ -3276,12 +2980,10 @@ static PHP_FUNCTION(mecab_nbest_next_tonode)
 
 	/* set return value */
 	if (object) {
-#ifdef ZEND_ENGINE_2
 		php_mecab_node_object *newobj;
 		object_init_ex(return_value, ce_MeCab_Node);
 		PHP_MECAB_FETCH_OBJECT(newobj, php_mecab_node_object *, return_value);
 		xnode = newobj->ptr;
-#endif
 	} else {
 		xnode = php_mecab_node_ctor(TSRMLS_C);
 		ZEND_REGISTER_RESOURCE(return_value, xnode, le_mecab_node);
@@ -3323,7 +3025,6 @@ static PHP_FUNCTION(mecab_format_node)
 
 	/* parse the arguments */
 	if (object) {
-#ifdef ZEND_ENGINE_2
 		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &node_object, ce_MeCab_Node) == FAILURE) {
 			return;
 		} else {
@@ -3334,7 +3035,6 @@ static PHP_FUNCTION(mecab_format_node)
 			xmecab = intern->ptr;
 			xnode = intern_node->ptr;
 		}
-#endif
 	} else {
 		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rr", &zmecab, &znode) == FAILURE) {
 			return;
@@ -3353,11 +3053,7 @@ static PHP_FUNCTION(mecab_format_node)
 	}
 
 	/* set return value */
-#ifdef IS_UNICODE
-	RETURN_U_STRING(MECAB_G(conv), fmt, ZSTR_DUPLICATE);
-#else
 	RETURN_STRING((char *)fmt, 1);
-#endif
 }
 /* }}} mecab_format_node */
 
@@ -3392,9 +3088,6 @@ static PHP_FUNCTION(mecab_dictionary_info)
 
 	/* initialize */
 	array_init(return_value);
-#ifdef IS_UNICODE
-	Z_ARRVAL_P(return_value)->unicode = UG(unicode);
-#endif
 
 	/* get information for each dictionary */
 	while (dicinfo != NULL) {
@@ -3402,17 +3095,14 @@ static PHP_FUNCTION(mecab_dictionary_info)
 
 		MAKE_STD_ZVAL(tmp);
 		array_init(tmp);
-#ifdef IS_UNICODE
-		Z_ARRVAL_P(tmp)->unicode = UG(unicode);
-#endif
 
-		pm_add_assoc_string(tmp, "filename", (char *)dicinfo->filename, 1);
-		pm_add_assoc_string(tmp, "charset",  (char *)dicinfo->charset,  1);
-		pm_add_assoc_long(tmp, "size",    (long)dicinfo->size);
-		pm_add_assoc_long(tmp, "type",    (long)dicinfo->type);
-		pm_add_assoc_long(tmp, "lsize",   (long)dicinfo->lsize);
-		pm_add_assoc_long(tmp, "rsize",   (long)dicinfo->rsize);
-		pm_add_assoc_long(tmp, "version", (long)dicinfo->version);
+		add_assoc_string(tmp, "filename", (char *)dicinfo->filename, 1);
+		add_assoc_string(tmp, "charset",  (char *)dicinfo->charset,  1);
+		add_assoc_long(tmp, "size",    (long)dicinfo->size);
+		add_assoc_long(tmp, "type",    (long)dicinfo->type);
+		add_assoc_long(tmp, "lsize",   (long)dicinfo->lsize);
+		add_assoc_long(tmp, "rsize",   (long)dicinfo->rsize);
+		add_assoc_long(tmp, "version", (long)dicinfo->version);
 
 		add_next_index_zval(return_value, tmp);
 
@@ -3448,42 +3138,39 @@ static PHP_FUNCTION(mecab_node_toarray)
 
 	/* initialize */
 	array_init(return_value);
-#ifdef IS_UNICODE
-	Z_ARRVAL_P(return_value)->unicode = UG(unicode);
-#endif
 
 	/* assign siblings and paths */
 	if (dump_all) {
-		pm_add_assoc_zval(return_value, "prev",  php_mecab_node_get_sibling(NULL, object, xnode, NODE_PREV TSRMLS_CC));
-		pm_add_assoc_zval(return_value, "next",  php_mecab_node_get_sibling(NULL, object, xnode, NODE_NEXT TSRMLS_CC));
-		pm_add_assoc_zval(return_value, "enext", php_mecab_node_get_sibling(NULL, object, xnode, NODE_ENEXT TSRMLS_CC));
-		pm_add_assoc_zval(return_value, "bnext", php_mecab_node_get_sibling(NULL, object, xnode, NODE_BNEXT TSRMLS_CC));
-		pm_add_assoc_zval(return_value, "rpath", php_mecab_node_get_path(NULL, object, xnode, NODE_RPATH TSRMLS_CC));
-		pm_add_assoc_zval(return_value, "lpath", php_mecab_node_get_path(NULL, object, xnode, NODE_LPATH TSRMLS_CC));
+		add_assoc_zval(return_value, "prev",  php_mecab_node_get_sibling(NULL, object, xnode, NODE_PREV TSRMLS_CC));
+		add_assoc_zval(return_value, "next",  php_mecab_node_get_sibling(NULL, object, xnode, NODE_NEXT TSRMLS_CC));
+		add_assoc_zval(return_value, "enext", php_mecab_node_get_sibling(NULL, object, xnode, NODE_ENEXT TSRMLS_CC));
+		add_assoc_zval(return_value, "bnext", php_mecab_node_get_sibling(NULL, object, xnode, NODE_BNEXT TSRMLS_CC));
+		add_assoc_zval(return_value, "rpath", php_mecab_node_get_path(NULL, object, xnode, NODE_RPATH TSRMLS_CC));
+		add_assoc_zval(return_value, "lpath", php_mecab_node_get_path(NULL, object, xnode, NODE_LPATH TSRMLS_CC));
 	}
 
 	/* assign node info */
-	pm_add_assoc_stringl(return_value, "surface", (char *)node->surface, (int)node->length, 1);
-	pm_add_assoc_string(return_value,  "feature", (char *)node->feature, 1);
-	pm_add_assoc_long(return_value, "id",         (long)node->id);
-	pm_add_assoc_long(return_value, "length",     (long)node->length);
-	pm_add_assoc_long(return_value, "rlength",    (long)node->rlength);
-	pm_add_assoc_long(return_value, "rcAttr",     (long)node->rcAttr);
-	pm_add_assoc_long(return_value, "lcAttr",     (long)node->lcAttr);
-	pm_add_assoc_long(return_value, "posid",      (long)node->posid);
-	pm_add_assoc_long(return_value, "char_type",  (long)node->char_type);
-	pm_add_assoc_long(return_value, "stat",       (long)node->stat);
-	pm_add_assoc_bool(return_value, "isbest",     (long)node->isbest);
+	add_assoc_stringl(return_value, "surface", (char *)node->surface, (int)node->length, 1);
+	add_assoc_string(return_value,  "feature", (char *)node->feature, 1);
+	add_assoc_long(return_value, "id",         (long)node->id);
+	add_assoc_long(return_value, "length",     (long)node->length);
+	add_assoc_long(return_value, "rlength",    (long)node->rlength);
+	add_assoc_long(return_value, "rcAttr",     (long)node->rcAttr);
+	add_assoc_long(return_value, "lcAttr",     (long)node->lcAttr);
+	add_assoc_long(return_value, "posid",      (long)node->posid);
+	add_assoc_long(return_value, "char_type",  (long)node->char_type);
+	add_assoc_long(return_value, "stat",       (long)node->stat);
+	add_assoc_bool(return_value, "isbest",     (long)node->isbest);
 	if (node->stat == MECAB_BOS_NODE) {
-		pm_add_assoc_long(return_value, "sentence_length", (long)node->sentence_length);
+		add_assoc_long(return_value, "sentence_length", (long)node->sentence_length);
 	} else {
-		pm_add_assoc_null(return_value, "sentence_length");
+		add_assoc_null(return_value, "sentence_length");
 	}
-	pm_add_assoc_double(return_value, "alpha", (double)node->alpha);
-	pm_add_assoc_double(return_value, "beta",  (double)node->beta);
-	pm_add_assoc_double(return_value, "prob",  (double)node->prob);
-	pm_add_assoc_long(return_value,   "wcost", (long)node->wcost);
-	pm_add_assoc_long(return_value,   "cost",  (long)node->cost);
+	add_assoc_double(return_value, "alpha", (double)node->alpha);
+	add_assoc_double(return_value, "beta",  (double)node->beta);
+	add_assoc_double(return_value, "prob",  (double)node->prob);
+	add_assoc_long(return_value,   "wcost", (long)node->wcost);
+	add_assoc_long(return_value,   "cost",  (long)node->cost);
 }
 /* }}} mecab_node_toarray */
 
@@ -3523,11 +3210,7 @@ static PHP_FUNCTION(mecab_node_tostring)
 	}
 
 	/* set return value */
-#ifdef IS_UNICODE
-	RETURN_U_STRING(MECAB_G(conv), fmt, ZSTR_DUPLICATE);
-#else
 	RETURN_STRING((char *)fmt, 1);
-#endif
 }
 /* }}} mecab_node_tostring */
 
@@ -4061,7 +3744,6 @@ static PHP_FUNCTION(mecab_path_cost)
 
 /* }}} Functions */
 
-#ifdef ZEND_ENGINE_2
 /* {{{ methods */
 
 /* {{{ methods of class MeCab_Node*/
@@ -4141,17 +3823,8 @@ static PHP_METHOD(MeCab_Node, __get)
 		php_mecab_node_get_path(return_value, object, xnode, NODE_LPATH TSRMLS_CC);
 		return;
 	}
-#ifdef IS_UNICODE
-	if (!strcmp(name, "surface")) {
-		RETURN_U_STRINGL(MECAB_G(conv), node->surface, (int)node->length, ZSTR_DUPLICATE);
-	}
-	if (!strcmp(name, "feature")) {
-		RETURN_U_STRING(MECAB_G(conv), node->feature, ZSTR_DUPLICATE);
-	}
-#else
 	if (!strcmp(name, "surface"))   RETURN_STRINGL((char *)node->surface, (int)node->length, 1);
 	if (!strcmp(name, "feature"))   RETURN_STRING((char *)node->feature, 1);
-#endif
 	if (!strcmp(name, "id"))        RETURN_LONG((long)node->id);
 	if (!strcmp(name, "length"))    RETURN_LONG((long)node->length);
 	if (!strcmp(name, "rlength"))   RETURN_LONG((long)node->rlength);
@@ -4672,7 +4345,6 @@ static PHP_METHOD(MeCab_Path, __isset)
 /* }}} methods of class MeCab_Path */
 
 /* }}} methods */
-#endif /* ZEND_ENGINE_2 */
 
 /*
  * Local variables:

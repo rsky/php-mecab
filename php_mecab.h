@@ -45,10 +45,8 @@ extern "C" {
 #include <SAPI.h>
 #include <ext/standard/info.h>
 #include <Zend/zend_extensions.h>
-#ifdef ZEND_ENGINE_2
 #include <Zend/zend_exceptions.h>
 #include <Zend/zend_interfaces.h>
-#endif
 
 #ifdef __cplusplus
 } /* extern "C" */
@@ -87,9 +85,6 @@ ZEND_BEGIN_MODULE_GLOBALS(mecab)
 	char *default_rcfile;
 	char *default_dicdir;
 	char *default_userdic;
-#ifdef IS_UNICODE
-	UConverter *conv;
-#endif
 	HashTable persistents;
 	/* zend_ts_hash is only available in ZendEngine 2 */
 #ifdef ZTS
@@ -168,8 +163,6 @@ struct _php_mecab_path {
 	const mecab_path_t *ptr;
 };
 
-#ifdef ZEND_ENGINE_2
-
 typedef enum _php_mecab_traverse_mode php_mecab_traverse_mode;
 typedef struct _php_mecab_object php_mecab_object;
 typedef struct _php_mecab_node_object php_mecab_node_object;
@@ -197,40 +190,6 @@ struct _php_mecab_path_object {
 	zend_object std;
 	php_mecab_path *ptr;
 };
-
-#endif
-
-/* }}} */
-
-/* {{{ utility macros */
-
-#ifdef IS_UNICODE
-#define pm_hash_find zend_ascii_hash_find
-#define pm_add_assoc_zval add_ascii_assoc_zval
-#define pm_add_assoc_null add_ascii_assoc_null
-#define pm_add_assoc_bool add_ascii_assoc_bool
-#define pm_add_assoc_long add_ascii_assoc_long
-#define pm_add_assoc_double add_ascii_assoc_double
-#define pm_add_assoc_string(arg, key, str, flags) \
-	_pm_add_assoc_stringl_ex(arg, key, strlen(key)+1, str, strlen(str), flags TSRMLS_CC)
-#define pm_add_assoc_stringl(arg, key, str, len, flags) \
-	_pm_add_assoc_stringl_ex(arg, key, strlen(key)+1, str, len, flags TSRMLS_CC)
-#define pm_add_next_index_string(arg, str, flags) \
-	_pm_add_next_index_stringl(arg, str, strlen(str), flags TSRMLS_CC)
-#define pm_add_next_index_stringl(arg, str, len, flags) \
-	_pm_add_next_index_stringl(arg, str, len, flags TSRMLS_CC)
-#else
-#define pm_hash_find zend_hash_find
-#define pm_add_assoc_zval add_assoc_zval
-#define pm_add_assoc_null add_assoc_null
-#define pm_add_assoc_bool add_assoc_bool
-#define pm_add_assoc_long add_assoc_long
-#define pm_add_assoc_double add_assoc_double
-#define pm_add_assoc_string add_assoc_string
-#define pm_add_assoc_stringl add_assoc_stringl
-#define pm_add_next_index_string add_next_index_string
-#define pm_add_next_index_stringl add_next_index_stringl
-#endif
 
 /* }}} */
 
