@@ -115,4 +115,14 @@
 #define PHP_MECAB_NODE_RETURN_PROPERTY(type, ...) PHP_MECAB_RETURN_PROPERTY(node, type, __VA_ARGS__)
 #define PHP_MECAB_PATH_RETURN_PROPERTY(type, ...) PHP_MECAB_RETURN_PROPERTY(path, type, __VA_ARGS__)
 
+#if PHP_API_VERSION < 20100412
+static inline void
+object_properties_init(zend_object *object, zend_class_entry *class_type)
+{
+	zval *tmp = NULL;
+	zend_hash_copy(object->properties, &class_type->default_properties,
+	               (copy_ctor_func_t)zval_add_ref, (void *)&tmp, sizeof(zval *));
+}
+#endif
+
 #endif /* PHP_MECAB_COMPAT_H */

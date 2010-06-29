@@ -978,8 +978,7 @@ php_mecab_object_new(zend_class_entry *ce TSRMLS_DC)
 	intern->ptr = php_mecab_ctor(TSRMLS_C);
 
 	zend_object_std_init(&intern->std, ce TSRMLS_CC);
-	zend_hash_copy(intern->std.properties, &ce->default_properties,
-			(copy_ctor_func_t)zval_add_ref, NULL, sizeof(zval *));
+	object_properties_init(&intern->std, ce);
 
 	retval.handle = zend_objects_store_put(intern,
 			(zend_objects_store_dtor_t)zend_objects_destroy_object,
@@ -1083,8 +1082,7 @@ php_mecab_node_object_new(zend_class_entry *ce TSRMLS_DC)
 	intern->mode = TRAVERSE_NEXT;
 
 	zend_object_std_init(&intern->std, ce TSRMLS_CC);
-	zend_hash_copy(intern->std.properties, &ce->default_properties,
-			(copy_ctor_func_t)zval_add_ref, NULL, sizeof(zval *));
+	object_properties_init(&intern->std, ce);
 
 	retval.handle = zend_objects_store_put(intern,
 			(zend_objects_store_dtor_t)zend_objects_destroy_object,
@@ -1185,8 +1183,7 @@ php_mecab_path_object_new(zend_class_entry *ce TSRMLS_DC)
 	intern->ptr = php_mecab_path_ctor(TSRMLS_C);
 
 	zend_object_std_init(&intern->std, ce TSRMLS_CC);
-	zend_hash_copy(intern->std.properties, &ce->default_properties,
-			(copy_ctor_func_t)zval_add_ref, NULL, sizeof(zval *));
+	object_properties_init(&intern->std, ce);
 
 	retval.handle = zend_objects_store_put(intern,
 			(zend_objects_store_dtor_t)zend_objects_destroy_object,
