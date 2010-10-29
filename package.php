@@ -52,7 +52,7 @@ $packagexml->setAPIVersion($apiversion);
 $packagexml->setReleaseStability($stability);
 $packagexml->setAPIStability($apistability);
 
-$packagexml->addMaintainer('lead', 'rsk', 'Ryusuke SEKIYAMA,', 'rsky0711@gmail.com');
+$packagexml->addMaintainer('lead', 'rsk', 'Ryusuke SEKIYAMA', 'rsky0711@gmail.com');
 
 $packagexml->setPackageType('extsrc');
 $packagexml->setProvidesExtension($packagename);
