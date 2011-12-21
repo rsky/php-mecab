@@ -1,7 +1,7 @@
 --TEST--
 mecab_nbest_sparse_tostr() function
 --SKIPIF--
-<?php 
+<?php
 
 if(!extension_loaded('mecab')) die('skip ');
 

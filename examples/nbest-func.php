@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * php-mecab/examples
  * parse N-Best

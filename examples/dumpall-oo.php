@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * php-mecab/examples
  * dump all nodes (OO-API)

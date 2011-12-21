@@ -1,7 +1,7 @@
 --TEST--
 mecab_path_lnode() function
 --SKIPIF--
-<?php 
+<?php
 
 if(!extension_loaded('mecab')) die('skip ');
 

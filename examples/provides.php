@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * php-mecab/examples
  * show ini entries, constants, functions and methods provided by mecab extension

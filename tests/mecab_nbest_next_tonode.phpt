@@ -1,7 +1,7 @@
 --TEST--
 mecab_nbest_next_tonode() function
 --SKIPIF--
-<?php 
+<?php
 
 if(!extension_loaded('mecab')) die('skip ');
 

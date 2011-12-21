@@ -1,7 +1,7 @@
 --TEST--
 mecab_destroy() function
 --SKIPIF--
-<?php 
+<?php
 
 if(!extension_loaded('mecab')) die('skip ');
 

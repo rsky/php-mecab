@@ -1,7 +1,7 @@
 --TEST--
 mecab_node_id() function
 --SKIPIF--
-<?php 
+<?php
 
 if(!extension_loaded('mecab')) die('skip ');
 
