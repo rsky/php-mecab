@@ -1,7 +1,7 @@
 --TEST--
 MeCab_Node::getSurface() member function
 --SKIPIF--
-<?php 
+<?php
 
 if(!extension_loaded('mecab')) die('skip ');
 

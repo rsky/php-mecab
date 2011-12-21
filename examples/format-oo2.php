@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * php-mecab/examples
  * parse string, wakati output format (OO-API with SPL and autocast)

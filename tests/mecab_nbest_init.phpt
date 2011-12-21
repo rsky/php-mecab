@@ -1,7 +1,7 @@
 --TEST--
 mecab_nbest_init() function
 --SKIPIF--
-<?php 
+<?php
 
 if(!extension_loaded('mecab')) die('skip ');
 
