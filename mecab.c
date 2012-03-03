@@ -1810,12 +1810,14 @@ php_mecab_check_path(const char *path, size_t length, char *real_path TSRMLS_DC)
 		return 0;
 	}
 
+#if !defined(PHP_VERSION_ID) || PHP_VERSION_ID < 50400
 	if (PG(safe_mode) && !php_checkuid(full_path, NULL, CHECKUID_CHECK_FILE_AND_DIR)) {
 		if (real_path == NULL) {
 			efree(full_path);
 		}
 		return 0;
 	}
+#endif
 
 	if (real_path == NULL) {
 		efree(full_path);
