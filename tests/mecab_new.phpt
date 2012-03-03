@@ -2,13 +2,16 @@
 mecab_new() function
 --SKIPIF--
 <?php
-
-if(!extension_loaded('mecab')) die('skip ');
-
- ?>
+if (!extension_loaded('mecab')) {
+    die('skip mecab extension is not loaded');
+}
+?>
 --FILE--
 <?php
-echo 'OK'; // no test case for this function yet
+$mecab = mecab_new();
+if (is_resource($mecab)) {
+    echo get_resource_type($mecab);
+}
 ?>
 --EXPECT--
-OK
+mecab

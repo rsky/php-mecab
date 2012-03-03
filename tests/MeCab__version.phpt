@@ -2,13 +2,17 @@
 MeCab::version() member function
 --SKIPIF--
 <?php
-
-if(!extension_loaded('mecab')) die('skip ');
-
- ?>
+if (!extension_loaded('mecab')) {
+    die('skip mecab extension is not loaded');
+}
+?>
 --FILE--
 <?php
-echo 'OK'; // no test case for this function yet
+if (preg_match('/^0\\.[1-9][0-9]+$/', MeCab::version())) {
+    echo 'OK';
+} else {
+    echo 'Unexpected MeCab Version';
+}
 ?>
 --EXPECT--
 OK
