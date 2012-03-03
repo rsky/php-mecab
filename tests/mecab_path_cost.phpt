@@ -1,7 +1,7 @@
 --TEST--
 mecab_path_cost() function
 --SKIPIF--
-<?php 
+<?php
 
 if(!extension_loaded('mecab')) die('skip ');
 

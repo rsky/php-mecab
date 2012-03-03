@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * php-mecab/examples
  * get begen/end node list (OO-API)

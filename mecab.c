@@ -1781,7 +1781,7 @@ php_mecab_check_path(const char *path, size_t length, char *real_path TSRMLS_DC)
 	{
 		return 0;
 	}
-	
+
 	if (VCWD_ACCESS(full_path, F_OK) != 0 ||
 		VCWD_ACCESS(full_path, R_OK) != 0 ||
 		php_check_open_basedir(full_path TSRMLS_CC))

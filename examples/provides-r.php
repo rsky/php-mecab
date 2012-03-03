@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * php-mecab/examples
  * show module dependencies, ini entries, constants, functions
