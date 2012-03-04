@@ -11,13 +11,14 @@ $summary        = 'The PHP bindings of the MeCab.';
 $description    = $summary;
 
 // information of cureent version
-$version        = '0.4.1';
-$apiversion     = '0.4.0';
+$version        = '0.5.0';
+$apiversion     = '0.5.0';
 $stability      = 'beta';
 $apistability   = 'beta';
 
 $notes = <<<EOS
-- Initial release on PEAR channel.
+- Added support for PHP 5.4.0.
+- Added support for MeCab 0.99.
 EOS;
 
 // set parameters to the package

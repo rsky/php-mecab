@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<package packagerversion="1.9.1" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
+<package packagerversion="1.9.4" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
     http://pear.php.net/dtd/tasks-1.0.xsd
     http://pear.php.net/dtd/package-2.0
     http://pear.php.net/dtd/package-2.0.xsd">
@@ -8,16 +8,16 @@
  <summary>The PHP bindings of the MeCab.</summary>
  <description>The PHP bindings of the MeCab.</description>
  <lead>
-  <name>Ryusuke SEKIYAMA,</name>
+  <name>Ryusuke SEKIYAMA</name>
   <user>rsk</user>
   <email>rsky0711@gmail.com</email>
   <active>yes</active>
  </lead>
- <date>2010-06-19</date>
- <time>14:59:59</time>
+ <date>2012-03-04</date>
+ <time>06:43:28</time>
  <version>
-  <release>0.4.1</release>
-  <api>0.4.0</api>
+  <release>0.5.0</release>
+  <api>0.5.0</api>
  </version>
  <stability>
   <release>beta</release>
@@ -25,43 +25,44 @@
  </stability>
  <license uri="http://www.opensource.org/licenses/mit-license.php">MIT License</license>
  <notes>
-- Initial release on PEAR channel.
+- Added support for PHP 5.4.0.
+- Added support for MeCab 0.99.
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
-   <file baseinstalldir="/" md5sum="fd24af753f6169a34398504a621fcfc4" name="examples/allmorphs-func.php" role="data" />
-   <file baseinstalldir="/" md5sum="653c682a367064072a357f5723142875" name="examples/allmorphs-oo.php" role="data" />
+   <file baseinstalldir="/" md5sum="4e2cc80ff08d950c070605180a1af97c" name="examples/allmorphs-func.php" role="data" />
+   <file baseinstalldir="/" md5sum="bd068d17f52169e50e27ded6ded8a3bd" name="examples/allmorphs-oo.php" role="data" />
    <file baseinstalldir="/" md5sum="1aa480d55e24195200404cf52b4368c8" name="examples/common.inc.php" role="data" />
-   <file baseinstalldir="/" md5sum="4b34e665ddb8e601f858d90fec0b5c27" name="examples/dicinfo-func.php" role="data" />
-   <file baseinstalldir="/" md5sum="38ffd31be80439d212b460f68820c239" name="examples/dicinfo-oo.php" role="data" />
-   <file baseinstalldir="/" md5sum="0498df0e7ff1c0274d39cfb7814ea97d" name="examples/dumpall-func.php" role="data" />
-   <file baseinstalldir="/" md5sum="9050082d572c8d6da4eac279477a762b" name="examples/dumpall-oo.php" role="data" />
-   <file baseinstalldir="/" md5sum="18c3a0baec8cbb60fbd1cbbca8e0f488" name="examples/dumpall-oo2.php" role="data" />
-   <file baseinstalldir="/" md5sum="a8c8cd3f7f3613a34cc58a7ae14f36cd" name="examples/format-func.php" role="data" />
-   <file baseinstalldir="/" md5sum="1a4791a5b3bbcbc471791bc44cc31d69" name="examples/format-oo.php" role="data" />
-   <file baseinstalldir="/" md5sum="e6dbd2e4fed21067abf045793d22ec4b" name="examples/format-oo2.php" role="data" />
-   <file baseinstalldir="/" md5sum="a1a86ef17acbf6f2ee2542030803b7d7" name="examples/nbest-func.php" role="data" />
-   <file baseinstalldir="/" md5sum="421f27806f43d481dda2a492c6049ede" name="examples/nbest-oo.php" role="data" />
-   <file baseinstalldir="/" md5sum="f948b37f50e23114addd6a411b3f0fbe" name="examples/nodelist-func.php" role="data" />
-   <file baseinstalldir="/" md5sum="d9bde6a2d6510f13f605a48f3d89303c" name="examples/nodelist-oo.php" role="data" />
-   <file baseinstalldir="/" md5sum="70ab9b7374afa70ee953382515cfeb69" name="examples/nodelist-oo2.php" role="data" />
-   <file baseinstalldir="/" md5sum="9f4c5b8454113730f68e91edc2c9ec34" name="examples/parse-func-p.php" role="data" />
-   <file baseinstalldir="/" md5sum="23fa71ae65a7cdf0602c6c2328eff298" name="examples/parse-func.php" role="data" />
-   <file baseinstalldir="/" md5sum="1cfe49dde1aa1d12ade13565caa596c5" name="examples/parse-oo-p.php" role="data" />
-   <file baseinstalldir="/" md5sum="de24d97ccaf61388b79dcfce5e6c1259" name="examples/parse-oo.php" role="data" />
-   <file baseinstalldir="/" md5sum="eb91c4274e58eded26cfc33e3823bb54" name="examples/provides-r.php" role="data" />
-   <file baseinstalldir="/" md5sum="7c54979656b42371ac2cb48137a072f3" name="examples/provides.php" role="data" />
-   <file baseinstalldir="/" md5sum="fe3195704c8b34ac2121faa4c47a3c1d" name="examples/split-func-p.php" role="data" />
-   <file baseinstalldir="/" md5sum="22629e5be73754f1fcdbc9d189b54531" name="examples/split-func.php" role="data" />
-   <file baseinstalldir="/" md5sum="f71c9abddbd30f1f82f9913aa09aab9f" name="examples/split-oo-p.php" role="data" />
-   <file baseinstalldir="/" md5sum="a0fbc3c989ba030f767b03ab04bfd65c" name="examples/split-oo.php" role="data" />
-   <file baseinstalldir="/" md5sum="7338eac878eba2cef6777b0abed0b4e1" name="examples/test-func.php" role="data" />
-   <file baseinstalldir="/" md5sum="dd87434aaa5f961d9d0fb8adff8d5fdd" name="examples/test-oo.php" role="data" />
-   <file baseinstalldir="/" md5sum="b70bbd11bdcb01c102828fca95efcabd" name="examples/wakati-func.php" role="data" />
-   <file baseinstalldir="/" md5sum="7a0c883490e8daa3abc8d62c937450b2" name="examples/wakati-oo.php" role="data" />
+   <file baseinstalldir="/" md5sum="9ceeba49a6a7fab432ad3351290b0490" name="examples/dicinfo-func.php" role="data" />
+   <file baseinstalldir="/" md5sum="c6a2daa1241d67dbaca3b2ff913025b0" name="examples/dicinfo-oo.php" role="data" />
+   <file baseinstalldir="/" md5sum="202bb27632abd3f815931791f85e72ba" name="examples/dumpall-func.php" role="data" />
+   <file baseinstalldir="/" md5sum="10d3c56e9ab56f1b0c59dd80999408cc" name="examples/dumpall-oo.php" role="data" />
+   <file baseinstalldir="/" md5sum="577429aecb09a791c13825af4c472962" name="examples/dumpall-oo2.php" role="data" />
+   <file baseinstalldir="/" md5sum="8b288eeb49abe5118a54775102fa65d0" name="examples/format-func.php" role="data" />
+   <file baseinstalldir="/" md5sum="4eb98771ae10e7c1c946ed9f7d74b2bf" name="examples/format-oo.php" role="data" />
+   <file baseinstalldir="/" md5sum="5145b73347ccfc47a8a6f21a8a60561d" name="examples/format-oo2.php" role="data" />
+   <file baseinstalldir="/" md5sum="bacb853e16aec5bfc777ea38aeb0e290" name="examples/nbest-func.php" role="data" />
+   <file baseinstalldir="/" md5sum="ede156420ecfcf978af56949a0d81a1b" name="examples/nbest-oo.php" role="data" />
+   <file baseinstalldir="/" md5sum="f96d284b4af70f3496c2232c80ef62b5" name="examples/nodelist-func.php" role="data" />
+   <file baseinstalldir="/" md5sum="7edda7f1e666650318f31c743f51b331" name="examples/nodelist-oo.php" role="data" />
+   <file baseinstalldir="/" md5sum="6896b4686ec4abf55f77c6632ee794bc" name="examples/nodelist-oo2.php" role="data" />
+   <file baseinstalldir="/" md5sum="2b07c09c12e58ce8d3e6682eb50c688d" name="examples/parse-func-p.php" role="data" />
+   <file baseinstalldir="/" md5sum="43552b01eade455ce3bb53b4147a81be" name="examples/parse-func.php" role="data" />
+   <file baseinstalldir="/" md5sum="923451ab5d6202d5e121316b53cea804" name="examples/parse-oo-p.php" role="data" />
+   <file baseinstalldir="/" md5sum="addbc0554045a391353db95a7e7b2a14" name="examples/parse-oo.php" role="data" />
+   <file baseinstalldir="/" md5sum="2aaf00369f899be83a57f3daa69c7eae" name="examples/provides-r.php" role="data" />
+   <file baseinstalldir="/" md5sum="a71da41610ca6bfa3cd3a57883003e8c" name="examples/provides.php" role="data" />
+   <file baseinstalldir="/" md5sum="a39db52b6bd9abd65d3d463545ffeff4" name="examples/split-func-p.php" role="data" />
+   <file baseinstalldir="/" md5sum="acf2ab5300a16d35e9b232c5ca9483e1" name="examples/split-func.php" role="data" />
+   <file baseinstalldir="/" md5sum="c818f347104f35a1eaa7cb20ff484962" name="examples/split-oo-p.php" role="data" />
+   <file baseinstalldir="/" md5sum="689ab663ed9aea928d8d18b827972445" name="examples/split-oo.php" role="data" />
+   <file baseinstalldir="/" md5sum="1cac2229f1a0ebf328b8347aea28c98e" name="examples/test-func.php" role="data" />
+   <file baseinstalldir="/" md5sum="b9c12466f1cc89b67123d25915d63c2c" name="examples/test-oo.php" role="data" />
+   <file baseinstalldir="/" md5sum="d4fc70b298014c5a4c48b62c1df2fc9a" name="examples/wakati-func.php" role="data" />
+   <file baseinstalldir="/" md5sum="992e2c54a81907ed1d5c0917aaf6157b" name="examples/wakati-oo.php" role="data" />
    <file baseinstalldir="/" md5sum="6b5c7cc75b62d10d4389bc2c7088c0fa" name="manual/file-entities.ent" role="doc" />
    <file baseinstalldir="/" md5sum="5262b3b70ab4347a282d098a8fe45e15" name="manual/functions.xml" role="doc" />
-   <file baseinstalldir="/" md5sum="5ca05f19f9969a84185344f3b9eae1f8" name="manual/Makefile" role="doc" />
+   <file baseinstalldir="/" md5sum="96b31be58238e2abbc9aed9df92fcc3b" name="manual/Makefile" role="doc" />
    <file baseinstalldir="/" md5sum="e40d9531023409f0d05883bb4e2a9a04" name="manual/manual.xml.in" role="doc" />
    <file baseinstalldir="/" md5sum="37762a6388a2e14e6b57efa8b244503a" name="manual/mecab/configure.xml" role="doc" />
    <file baseinstalldir="/" md5sum="5d55960533c4863e51e96e5601109b42" name="manual/mecab/reference.xml" role="doc" />
@@ -118,116 +119,117 @@
    <file baseinstalldir="/" md5sum="8ca19794806c615d4f466f7d758f617b" name="manual/mecab/functions/mecab-sparse-tostr.xml" role="doc" />
    <file baseinstalldir="/" md5sum="05758590d34e2450f7e76f7bc0213d9a" name="manual/mecab/functions/mecab-split.xml" role="doc" />
    <file baseinstalldir="/" md5sum="e4e7e7ac9b7f1a77a17381d97853a08a" name="manual/mecab/functions/mecab-version.xml" role="doc" />
-   <file baseinstalldir="/" md5sum="ab3205e29451f7a2ed92e34a2a2218f0" name="tests/mecab_destroy.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="cac54b09d2bf67d0a193281c94196b4f" name="tests/mecab_dictionary_info.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="76e97315a7b8be123e6f04bb6beb945e" name="tests/mecab_format_node.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="4fd01ab694dc7d9631205c1ed86bb928" name="tests/mecab_nbest_init.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="b4ca8e879c3c22bb6946e1e185db7464" name="tests/mecab_nbest_next_tonode.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="6890e1afb72326757519f04a7834617c" name="tests/mecab_nbest_next_tostr.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="46740e2d9fbf455fe9545662c32d13fd" name="tests/mecab_nbest_sparse_tostr.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="18aafefae01d356a8863b65a1155afea" name="tests/mecab_new.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="3d0e7c1b978dd761be045abffde468bd" name="tests/MeCab_NodeIterator__current.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="7f881e3ee6b88d82775f949c931dd601" name="tests/MeCab_NodeIterator__key.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="df98ca849c4e281945d3522603d9c814" name="tests/MeCab_NodeIterator__next.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="ebf69b00dd8c3da3151eb8e17d3811a6" name="tests/MeCab_NodeIterator__rewind.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="3f1a98c55b454d32c74701a1805e14a3" name="tests/MeCab_NodeIterator__valid.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="85055e8b87ad3239814f9ca0a33903b0" name="tests/mecab_node_alpha.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="74fc063a266800f1fa4d8d349fe33d40" name="tests/mecab_node_begin_node_list.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="57f3edae6737cca22a6758bdce70cc8e" name="tests/mecab_node_beta.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="79687433d962d9e4a44c97ae44d5e278" name="tests/mecab_node_bnext.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="420f86d1a67eea8a796b03ca832ae97c" name="tests/mecab_node_char_type.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="da4f2572b475939a226660091ec5366c" name="tests/mecab_node_cost.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="30b427d6feeee229c1781fa266d77a75" name="tests/mecab_node_end_node_list.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="6d47df38ad26128b4f74eafe0f0e04fc" name="tests/mecab_node_enext.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="2bfe492c76d76c6e7ee4601ecfa21f62" name="tests/mecab_node_feature.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="bc4ca3883b818fa5844804f308609895" name="tests/mecab_node_id.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="ce4d1e2efe815e2fa7ebcc49e962653b" name="tests/mecab_node_isbest.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="351fddef1b654520a1f6bd4173ad2e81" name="tests/mecab_node_lcattr.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="61bb93157cc083ccc36eb3c748f69283" name="tests/mecab_node_length.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="ba1191332a947ce84c5a4b48109bdfd5" name="tests/mecab_node_lpath.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="44a8b1a8da6c882485db8f99e6340199" name="tests/mecab_node_next.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="1bfda09c98cd5fb66f6dc5eb2cc559f7" name="tests/mecab_node_posid.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="e412d5f658ba7b32c53cec1a1fbdff0d" name="tests/mecab_node_prev.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="c1276cc91a93c8d4cbebd9ef3defbd0b" name="tests/mecab_node_prob.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="6b238762dc23847db779c4e5bf77c935" name="tests/mecab_node_rcattr.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="4ebba8919b6cd0b0099fe93cc5fc5969" name="tests/mecab_node_rlength.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="e95eb713c1f3b4327ef8ed0aba4e5a10" name="tests/mecab_node_rpath.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="dec25cb2ec83fc28109e1d30dd4aa5cd" name="tests/mecab_node_sentence_length.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="19bee0997fa0c43455a577580ce6138d" name="tests/mecab_node_stat.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="35b3ce85f8eb7b6427980d17b1c86ac0" name="tests/mecab_node_surface.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="036c120ae1ed41057cfe9fb17e41adab" name="tests/mecab_node_toarray.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="bd83340d443fc5592d8aca69a272f458" name="tests/mecab_node_tostring.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="b92656f77a9c58946c1f5de016074b78" name="tests/mecab_node_wcost.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="ccbc24af3e0adec356c8e58254a27a1d" name="tests/MeCab_Node__getAlpha.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="b691b56b1701e3b6592150cdc9f3acba" name="tests/MeCab_Node__getBeginNodeList.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="055b0b443e1a9a8646aa1b1c09c50f52" name="tests/MeCab_Node__getBeta.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="47ff2fa0f0518f2af0ffdb97a2c0abe9" name="tests/MeCab_Node__getBNext.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="69dd64e1d44889d3c1409e113d28cbb7" name="tests/MeCab_Node__getCharType.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="5474e7146763af561b26022b1bd1beaf" name="tests/MeCab_Node__getCost.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="309c7066bf6fb1d1ef682e609b954626" name="tests/MeCab_Node__getEndNodeList.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="bea174350fe66d98290c9c6b126345f4" name="tests/MeCab_Node__getENext.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="0ad38a82c29e7e1622240045fc740c6e" name="tests/MeCab_Node__getFeature.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="66258a21f1c6fdfdf18d06439bfbe4c0" name="tests/MeCab_Node__getId.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="cd6ca8bd1c569327a6f582e61fa14351" name="tests/MeCab_Node__getIterator.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="0c1cf0573e711b46aa19bfac8b0e9e08" name="tests/MeCab_Node__getLcAttr.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="aa0d354b19b0ca3c3255a5936c5a75e3" name="tests/MeCab_Node__getLength.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="08fcd9fd516787c297547afea66ffda6" name="tests/MeCab_Node__getLPath.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="a3a5100c044aa96c6e18afaac9e98d9b" name="tests/MeCab_Node__getNext.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="84a0c2e64ded52357f79af59994d07a0" name="tests/MeCab_Node__getPosId.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="4f0e1d72c5874461b48a191de2599661" name="tests/MeCab_Node__getPrev.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="73bf13de37148575ca108d4e430808e4" name="tests/MeCab_Node__getProb.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="68d0e6c1abf975fd6d4836008e731395" name="tests/MeCab_Node__getRcAttr.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="faabf8d570b0719befa8238512bfe7f0" name="tests/MeCab_Node__getRLength.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="8ddb0a086aab1f79867974d414f17e51" name="tests/MeCab_Node__getRPath.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="20f42097e29d87912bdce4fdb9e364c5" name="tests/MeCab_Node__getSentenceLength.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="c407994526ef5c81358014152f13e9a4" name="tests/MeCab_Node__getStat.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="5a5cd7f8dd93fc61b4d0bdeb14d87ebf" name="tests/MeCab_Node__getSurface.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="c85ed5a5939af79be118db4048a5484c" name="tests/MeCab_Node__getWCost.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="d61d39c4e2dc52398e59cc7f20752fac" name="tests/MeCab_Node__isBest.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="513c0a78828f05d3aedcd7c50d31285e" name="tests/MeCab_Node__setTraverse.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="a4a8e91e2328715e38fb6b91ff90e6b7" name="tests/MeCab_Node__toArray.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="6a5c3e3b1bbad49d8a7f5c41acbdb09d" name="tests/MeCab_Node__toString.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="0e749a22a2d61fb2c3f3aecb0c1e7d5e" name="tests/mecab_path_cost.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="ac76c908be2e25ac399cbfbac49179d5" name="tests/mecab_path_lnext.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="e2ffe7b46ce6f638dc0c7dbae4e8322d" name="tests/mecab_path_lnode.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="47262848546a86085b1c0cebeb6be21e" name="tests/mecab_path_prob.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="581ee3fac9e7939a1106e776df1b4448" name="tests/mecab_path_rnext.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="86f916440d6bf8a21779ce0bb507d88e" name="tests/mecab_path_rnode.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="38bc77d3f5200a82359d931fbe3dc538" name="tests/MeCab_Path__getCost.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="6218c3c0ae91b1c0f5403d6e34ca02be" name="tests/MeCab_Path__getLNext.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="00fbdf4f2900c58f3b58a736cc5d6b92" name="tests/MeCab_Path__getLNode.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="97582b4fc3f0f1935080d22de33188cb" name="tests/MeCab_Path__getProb.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="e86d06331e8204bb2a4e004a92ca78de" name="tests/MeCab_Path__getRNext.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="87fefb28b807103eb6c24bb40363e843" name="tests/MeCab_Path__getRNode.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="9da17045dbca1a85bce061b2284ca1c2" name="tests/mecab_sparse_tonode.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="77af77d3cb68b973ad39ebadb8259bd0" name="tests/mecab_sparse_tostr.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="1777c14b8bfc64e50c197d0ade3497a6" name="tests/mecab_split.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="79f434db9dc2c897dedb117d2fd09490" name="tests/MeCab_Tagger__dictionaryInfo.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="1b8ab2816939eb4e0abf964b0b39b26e" name="tests/MeCab_Tagger__formatNode.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="fb5f0b3c340dc6afde8681189d2e06da" name="tests/MeCab_Tagger__next.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="782a196c4390405ba4afd299727fcfbd" name="tests/MeCab_Tagger__nextNode.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="3702c68933699989b1cd9b18ad4f70c8" name="tests/MeCab_Tagger__parse.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="5909d8fcd2ae117c88e7a7e212aa674b" name="tests/MeCab_Tagger__parseNBest.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="45cb10e2b54056a3f72c4f3e8634a2ac" name="tests/MeCab_Tagger__parseNBestInit.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="231200d0afe6ea56af8a692c1671bab8" name="tests/MeCab_Tagger__parseToNode.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="41a489504f132a198e5451455bb41b8a" name="tests/MeCab_Tagger__parseToString.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="669d39df88b37a94e10e57cb005d3dca" name="tests/MeCab_Tagger____construct.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="13516ab2a1ebe3308880eae6599d0f07" name="tests/mecab_version.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="e5b35e4e798bc18f54e3536723e96061" name="tests/MeCab__getEncoding.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="dfe2c9f27a72da3ac9fe8800412880f9" name="tests/MeCab__setEncoding.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="61477ea1f3f1577f616ae802eadc5e5a" name="tests/MeCab__split.phpt" role="test" />
-   <file baseinstalldir="/" md5sum="05b9558d9b94bca0eea926312df9aa6f" name="tests/MeCab__version.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="ea4f9d0234028e189c197972a781808e" name="tests/mecab_destroy.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="0ace9ce9d07e0b52cd6c20f07a8ac8ff" name="tests/mecab_dictionary_info.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="8b9e7dabafbdfa1615a009bc006e9eba" name="tests/mecab_format_node.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="24dfaf5a8ce91571b33dfb1d3fa2d28a" name="tests/mecab_nbest_init.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="f5e6bb94181caf1044b2680871c02e1e" name="tests/mecab_nbest_next_tonode.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="ed05f718ccf255abff9e36fc34f17769" name="tests/mecab_nbest_next_tostr.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="93608e92277667dcfbc2dc395d2ea4cc" name="tests/mecab_nbest_sparse_tostr.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="792e8b0dbce391eebdb70649daba5e45" name="tests/mecab_new.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="4ba76c2a11404552ee614932cf558cee" name="tests/MeCab_NodeIterator__current.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="74de5cd2d49dd166cc5b6f91bc257f16" name="tests/MeCab_NodeIterator__key.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="385add9c9c6d5d7929afc6f5bec3e64b" name="tests/MeCab_NodeIterator__next.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="d3ac5dc545db7bfb5a211b638ac13fb6" name="tests/MeCab_NodeIterator__rewind.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="733ee1171f46fa5c96ae8a58e7d52c8c" name="tests/MeCab_NodeIterator__valid.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="ba6d4c84c6d6d8946637d2cd5f279173" name="tests/mecab_node_alpha.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="f894db1497ac59e062467a2806341f5c" name="tests/mecab_node_begin_node_list.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="3672b0633e63e0a02668600d1fb3423d" name="tests/mecab_node_beta.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="8cf6dcc0881169dcee26fa20e1fd64e7" name="tests/mecab_node_bnext.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="55611319754165dd15fbb9deedec9f49" name="tests/mecab_node_char_type.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="b8e0c1f6890046eb817c16904528c8b5" name="tests/mecab_node_cost.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="852bd9e818888aa9e33596c637a8e4e4" name="tests/mecab_node_end_node_list.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="fb8f38f1be644739d6acd1bd8155e700" name="tests/mecab_node_enext.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="3ef2693736f390f36e2774efe9a5c3e0" name="tests/mecab_node_feature.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="a59fb0c5ca7b23f49f6b4a0b795f6079" name="tests/mecab_node_id.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="c6cd14acadee79b318507dd6494f7be7" name="tests/mecab_node_isbest.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="4fd2c8b616405ad9918a1eeee2a10e62" name="tests/mecab_node_lcattr.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="004ff2f72f03ad396730a41c3928daaa" name="tests/mecab_node_length.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="ed03aa2efdfee794ffa69fdc116d7be0" name="tests/mecab_node_lpath.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="85b6446b418d7888222e3637905b6022" name="tests/mecab_node_next.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="943d07fe68e3cb5e76bbe78b5e474334" name="tests/mecab_node_posid.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="b1cfae443f3ba735fbe3b862dfadc576" name="tests/mecab_node_prev.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="52217cdd287f2b806e24c2998e46932d" name="tests/mecab_node_prob.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="ccb1e25eaec51c4f28d419380907057a" name="tests/mecab_node_rcattr.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="54469d22af4ef5b2bffbc804e7e9d671" name="tests/mecab_node_rlength.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="accf253e3369f8357eea81182a97b4c0" name="tests/mecab_node_rpath.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="6d34e0937e0d6f1c8bbc0fca3fa8efcf" name="tests/mecab_node_sentence_length.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="ea6810d5f259c59ef4c35f4715d740da" name="tests/mecab_node_stat.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="241c80ac3737e266f3d5270b03db2d19" name="tests/mecab_node_surface.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="04cadb3cb146f12c3ad0f2d10360bc95" name="tests/mecab_node_toarray.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="e77600f0ff653639a1fe9e7c575eef6d" name="tests/mecab_node_tostring.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="3887a413830f8138c67a535af52f45cb" name="tests/mecab_node_wcost.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="6b18af3c9daaf1669d4e510a10082edf" name="tests/MeCab_Node__getAlpha.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="a58d9f65a45e32da6d934eb8d7766932" name="tests/MeCab_Node__getBeginNodeList.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="f54dc03dc127443a8f0c5805c2e74293" name="tests/MeCab_Node__getBeta.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="38627745ae30bc8e4c2b5b564a87c37e" name="tests/MeCab_Node__getBNext.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="f461511f1bbcd3279ab126dde165e9fd" name="tests/MeCab_Node__getCharType.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="815ab3e878085716533c8066e3decb3d" name="tests/MeCab_Node__getCost.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="32e0f373abafd32b11d2c30d78d4e603" name="tests/MeCab_Node__getEndNodeList.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="d56ca3024368f2e06f090940f9d67231" name="tests/MeCab_Node__getENext.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="7a3dfccedf560425e9306e797ad24251" name="tests/MeCab_Node__getFeature.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="cc9ce94d6e3c466ea0e8aed38bf98d92" name="tests/MeCab_Node__getId.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="2751cdce6dc881dd2f5af038563e1c81" name="tests/MeCab_Node__getIterator.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="51a1efe4d656e817afe224ff30a2a1bd" name="tests/MeCab_Node__getLcAttr.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="b9a5b8e94b4109fd0bc3814e2caa113b" name="tests/MeCab_Node__getLength.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="45d60849d2e4d9a9949ee9875d7422f6" name="tests/MeCab_Node__getLPath.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="708a857a2a6f44deb56f8d6e1e671238" name="tests/MeCab_Node__getNext.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="fde8f99c81696bc6e0ccde6038c7e0bf" name="tests/MeCab_Node__getPosId.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="3923311d2fcfbf69c139cb33a3f53f31" name="tests/MeCab_Node__getPrev.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="05c63dc2425405e4c0aac5fe8ff2cc69" name="tests/MeCab_Node__getProb.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="8e91e6898d187f7e12ff6b02ee79dcf7" name="tests/MeCab_Node__getRcAttr.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="8a0ae47a9d1c805ffdb214a1dac3d40f" name="tests/MeCab_Node__getRLength.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="29da3d4d5caf218cc8b9ce177a6972af" name="tests/MeCab_Node__getRPath.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="7c0d3a9f4e3f5774df06249cefc9604a" name="tests/MeCab_Node__getSentenceLength.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="7ffbf739398353c2dcb6ac939c22382c" name="tests/MeCab_Node__getStat.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="4cb5741d2cf62c9a50b6936e72a2365c" name="tests/MeCab_Node__getSurface.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="78834d772f4be48eb5dfdd081f33255c" name="tests/MeCab_Node__getWCost.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="38aba97f8be940f2c140c966ae12bd95" name="tests/MeCab_Node__isBest.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="06020c11a98ab4b470f04fb472670519" name="tests/MeCab_Node__setTraverse.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="8fddcd21e3bf6a8abc736b10c3947709" name="tests/MeCab_Node__toArray.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="4cc36deefb1c0b2a2a42b1ea68315e4e" name="tests/MeCab_Node__toString.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="4df7eba1b68d0cc5a5db08a73957bf7d" name="tests/mecab_path_cost.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="2514ade9472b9bfe05835d09307f8cdf" name="tests/mecab_path_lnext.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="d771be79bd094ec41c5dcd9559da249d" name="tests/mecab_path_lnode.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="34389f9177454b30b55572a41e5a77de" name="tests/mecab_path_prob.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="3d4965d7e36940899f54fdb2d0504c52" name="tests/mecab_path_rnext.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="b400281a13bb3c3baefdb7e8f6afc182" name="tests/mecab_path_rnode.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="5c0695ec5f9f15e3a027123bac858d6e" name="tests/MeCab_Path__getCost.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="d8f04308d6ae434a61b31f04cef677e6" name="tests/MeCab_Path__getLNext.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="d7aa04de4c6129f237791a1a2c9d5835" name="tests/MeCab_Path__getLNode.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="f9d47c28b38060c780213c5ce504838b" name="tests/MeCab_Path__getProb.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="345c9f840de39a61328792cb3aff2670" name="tests/MeCab_Path__getRNext.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="d497c2a1cfa4a94c05baddecfc12d471" name="tests/MeCab_Path__getRNode.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="641dae064f01b1af29256f1d480173c9" name="tests/mecab_sparse_tonode.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="b4a9d91a8f0e14f206ab846cb144b59b" name="tests/mecab_sparse_tostr.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="d16028f5fdcc177c6ef9c6d037266b01" name="tests/mecab_split.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="33be18f74707462da90ce137e409ed00" name="tests/MeCab_Tagger__dictionaryInfo.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="6448e8b2c2c6da57be39536245ec0431" name="tests/MeCab_Tagger__formatNode.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="9ef455c764cdbbe58c94274869bf7135" name="tests/MeCab_Tagger__next.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="5cd7258e498127d16553f804267cd3d3" name="tests/MeCab_Tagger__nextNode.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="26de92cab2270ab09a763e4515f4d3cb" name="tests/MeCab_Tagger__parse.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="1c431232b407e9dfff996b29bcc64527" name="tests/MeCab_Tagger__parseNBest.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="556ce5489def979b7cb73a369008c370" name="tests/MeCab_Tagger__parseNBestInit.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="0d63dc061285c5b51374cd2150f54dc7" name="tests/MeCab_Tagger__parseToNode.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="1a6b1dd9096108677f856432c07a6404" name="tests/MeCab_Tagger__parseToString.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="b2a97c6aea35875d6e731803b34db0c2" name="tests/MeCab_Tagger____construct.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="bac804bb901a4e182c2893860d4a0dde" name="tests/mecab_version.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="5e0416a65435af2134b984bab4933cc1" name="tests/MeCab__getEncoding.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="29fd04feba807a1a50e8fd73a7066844" name="tests/MeCab__setEncoding.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="6f698b4d648f68f02b4ccb6afb71b326" name="tests/MeCab__split.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="2e8617528ce20f1f39203bf3cd2b605f" name="tests/MeCab__version.phpt" role="test" />
    <file baseinstalldir="/" md5sum="4d1d2f56d02cbc1d997673f4bfa9fed9" name="tests/test.txt.eucjp" role="test" />
+   <file baseinstalldir="/" md5sum="8853c2d996bb8523415174bbaac2290b" name="config.log" role="data" />
    <file baseinstalldir="/" md5sum="c81e94e9eb178ddab729696b62914c5e" name="config.m4" role="src" />
    <file baseinstalldir="/" md5sum="9ee2dd983e4b336c0b32ad1af97f59c5" name="config.w32" role="src" />
    <file baseinstalldir="/" md5sum="4a528ac4719ac0cb1e1bb29c3bf5550f" name="CREDITS" role="doc" />
-   <file baseinstalldir="/" md5sum="7291f1b05a4608bc9223993fd2bea6c2" name="EXPERIMENTAL" role="doc" />
+   <file baseinstalldir="/" md5sum="ccb25af462817b17541e7f6b3dcfeff9" name="EXPERIMENTAL" role="doc" />
    <file baseinstalldir="/" md5sum="cf40ac5fa27cc3ba0d44c44a455f9b64" name="LICENSE" role="doc" />
-   <file baseinstalldir="/" md5sum="d147e60e70744a15427f6e6f12769e87" name="mecab.c" role="src" />
-   <file baseinstalldir="/" md5sum="b6dbe2604c441ab1da89d85ba2a6bf16" name="mecab.dsp" role="src" />
-   <file baseinstalldir="/" md5sum="29d93ae26dba92e4c71e0b88b1c5bc17" name="php_mecab.h" role="src" />
-   <file baseinstalldir="/" md5sum="32ce0d2be96b4a03040c33c077226241" name="php_mecab_compat.h" role="src" />
-   <file baseinstalldir="/" md5sum="fa48abe9782de5ed869bb5695ec51480" name="README" role="doc" />
+   <file baseinstalldir="/" md5sum="9a7381ab378c37cb0bc5dea7debe302b" name="mecab.c" role="src" />
+   <file baseinstalldir="/" md5sum="1630c5f0b1f7bc7061de2dc088f96fac" name="mecab.dsp" role="src" />
+   <file baseinstalldir="/" md5sum="d0928f0689265edf6d4a66d15f61442c" name="php_mecab.h" role="src" />
+   <file baseinstalldir="/" md5sum="7b7b91230fa4df945288d75265b0591d" name="php_mecab_compat.h" role="src" />
+   <file baseinstalldir="/" md5sum="0bf72f97ed447492ae9bae1574e811fa" name="README" role="doc" />
   </dir>
  </contents>
  <dependencies>
@@ -258,6 +260,22 @@
    <license uri="http://www.opensource.org/licenses/mit-license.php">MIT License</license>
    <notes>
 - Initial release on PEAR channel.
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>0.5.0</release>
+    <api>0.5.0</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <date>2012-03-04</date>
+   <license uri="http://www.opensource.org/licenses/mit-license.php">MIT License</license>
+   <notes>
+- Added support for PHP 5.4.0.
+- Added support for MeCab 0.99.
    </notes>
   </release>
  </changelog>
