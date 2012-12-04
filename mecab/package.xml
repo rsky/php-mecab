@@ -219,7 +219,6 @@
    <file baseinstalldir="/" md5sum="6f698b4d648f68f02b4ccb6afb71b326" name="tests/MeCab__split.phpt" role="test" />
    <file baseinstalldir="/" md5sum="2e8617528ce20f1f39203bf3cd2b605f" name="tests/MeCab__version.phpt" role="test" />
    <file baseinstalldir="/" md5sum="4d1d2f56d02cbc1d997673f4bfa9fed9" name="tests/test.txt.eucjp" role="test" />
-   <file baseinstalldir="/" md5sum="8853c2d996bb8523415174bbaac2290b" name="config.log" role="data" />
    <file baseinstalldir="/" md5sum="c81e94e9eb178ddab729696b62914c5e" name="config.m4" role="src" />
    <file baseinstalldir="/" md5sum="9ee2dd983e4b336c0b32ad1af97f59c5" name="config.w32" role="src" />
    <file baseinstalldir="/" md5sum="4a528ac4719ac0cb1e1bb29c3bf5550f" name="CREDITS" role="doc" />
