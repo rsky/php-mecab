@@ -1,5 +1,20 @@
-How to make .deb
-================
+How to make debian package of php-mecab
+=======================================
+
+REQUIREMENTS
+------------
+
+* build-essential
+* devscripts
+* dh-make
+* dh-make-php
+* libmecab-dev
+* mecab
+* php5-dev
+* xsltproc
+
+HOW-TO
+------
 
 1. $ `sudo pear channel-discover pecl.opendogs.org`
 2. $ `cd php-mecab/mecab`
@@ -7,7 +22,7 @@ How to make .deb
 4. $ `mv mecab-x.y.z.tgz ../packages/debian/` *[HERE]*
 5. $ `dh-make-pecl --only 5 mecab-x.y.z.tgz`
 6. $ `cd php-mecab-x.y.z`
-7. edit debian/control
+7. Edit 'debian/control'.
     * Add 'mecab' and 'libmecab-dev` to 'Build-Depends'.
     * Add 'libmecab1' to 'Depends'.
 8. $ `debuild -uc -us`
