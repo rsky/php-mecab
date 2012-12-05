@@ -37,6 +37,12 @@
 
 static ZEND_DECLARE_MODULE_GLOBALS(mecab)
 
+#ifdef ZTS
+static MUTEX_T php_mecab_mutex = NULL;
+#endif
+
+static HashTable persistents;
+
 static int le_mecab;
 static int le_mecab_node;
 static int le_mecab_path;
@@ -71,7 +77,6 @@ static PHP_MINIT_FUNCTION(mecab);
 static PHP_MSHUTDOWN_FUNCTION(mecab);
 static PHP_MINFO_FUNCTION(mecab);
 static PHP_GINIT_FUNCTION(mecab);
-static PHP_GSHUTDOWN_FUNCTION(mecab);
 
 /* }}} */
 
@@ -473,6 +478,7 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_node_toarray_m, ZEND_SEND_BY_VAL, ZEND_RETU
 	ZEND_ARG_INFO(0, dump_all)
 ZEND_END_ARG_INFO()
 
+#if !PHP_MECAB_99X
 ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_node__list, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
 	ZEND_ARG_INFO(0, node)
@@ -483,6 +489,7 @@ ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_node__list_m, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
 	ZEND_ARG_INFO(0, index)
 ZEND_END_ARG_INFO()
+#endif
 
 ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_node_settraverse, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
@@ -532,7 +539,7 @@ static zend_function_entry mecab_methods[] = {
 	PM_TAGGER_ME_MAPPING(nextNode,           nbest_next_tonode)
 	PM_TAGGER_ME_MAPPING_EX(formatNode,      format_node)
 	PM_TAGGER_ME_MAPPING(dictionaryInfo,     dictionary_info)
-	{ NULL, NULL, NULL }
+	{ NULL, NULL, NULL, 0, 0 }
 };
 /* }}} */
 
@@ -550,7 +557,7 @@ static zend_function_entry mecab_node_methods[] = {
 	PHP_ME(MeCab_Node, getIterator, NULL, ZEND_ACC_PUBLIC)
 	PHP_ME(MeCab_Node, setTraverse, arginfo_mecab_node_settraverse, ZEND_ACC_PUBLIC)
 	/* Dumper */
-	PM_NODE_ME_MAPPING(toArray, toarray)
+	PHP_ME_MAPPING(toArray, mecab_node_toarray, arginfo_mecab_node_toarray_m, ZEND_ACC_PUBLIC)
 	PM_NODE_ME_MAPPING(toString, tostring)
 	PM_NODE_ME_MAPPING(__toString, tostring)
 	/* Getters */
@@ -583,7 +590,7 @@ static zend_function_entry mecab_node_methods[] = {
 	PM_NODE_ME_MAPPING(getProb,     prob)
 	PM_NODE_ME_MAPPING(getWCost,    wcost)
 	PM_NODE_ME_MAPPING(getCost,     cost)
-	{ NULL, NULL, NULL }
+	{ NULL, NULL, NULL, 0, 0 }
 };
 /* }}} */
 
@@ -597,7 +604,7 @@ static zend_function_entry mecab_iterator_methods[] = {
 	PHP_ME(MeCab_NodeIterator,  next,       NULL, ZEND_ACC_PUBLIC)
 	PHP_ME(MeCab_NodeIterator,  rewind,     NULL, ZEND_ACC_PUBLIC)
 	PHP_ME(MeCab_NodeIterator,  valid,      NULL, ZEND_ACC_PUBLIC)
-	{ NULL, NULL, NULL }
+	{ NULL, NULL, NULL, 0, 0 }
 };
 /* }}} */
 
@@ -618,7 +625,7 @@ static zend_function_entry mecab_path_methods[] = {
 	PM_PATH_ME_MAPPING(getLNode, lnode)
 	PM_PATH_ME_MAPPING(getProb, prob)
 	PM_PATH_ME_MAPPING(getCost, cost)
-	{ NULL, NULL, NULL }
+	{ NULL, NULL, NULL, 0, 0 }
 };
 /* }}} methods */
 
@@ -695,7 +702,7 @@ static zend_function_entry mecab_functions[] = {
 	PM_PATH_FE(lnode)
 	PM_PATH_FE(prob)
 	PM_PATH_FE(cost)
-	{ NULL, NULL, NULL }
+	{ NULL, NULL, NULL, 0, 0 }
 };
 /* }}} */
 
@@ -704,14 +711,15 @@ static zend_function_entry mecab_functions[] = {
 static zend_module_dep mecab_deps[] = {
 	ZEND_MOD_REQUIRED("reflection")
 	ZEND_MOD_REQUIRED("spl")
-	{NULL, NULL, NULL, 0}
+	{ NULL, NULL, NULL, 0 }
 };
 
 /* }}} */
 
 /* {{{ mecab_module_entry */
 zend_module_entry mecab_module_entry = {
-	STANDARD_MODULE_HEADER_EX, NULL,
+	STANDARD_MODULE_HEADER_EX,
+	NULL,
 	mecab_deps,
 	"mecab",
 	mecab_functions,
@@ -723,7 +731,7 @@ zend_module_entry mecab_module_entry = {
 	PHP_MECAB_MODULE_VERSION,
 	PHP_MODULE_GLOBALS(mecab),
 	PHP_GINIT(mecab),
-	PHP_GSHUTDOWN(mecab),
+	NULL,
 	NULL,
 	STANDARD_MODULE_PROPERTIES_EX
 };
@@ -750,6 +758,11 @@ PHP_INI_END()
 static PHP_MINIT_FUNCTION(mecab)
 {
 	REGISTER_INI_ENTRIES();
+
+	zend_hash_init(&persistents, 8, NULL, (dtor_func_t)php_mecab_free_persistent, 1);
+#ifdef ZTS
+	php_mecab_mutex = tsrm_mutex_alloc();
+#endif
 
 	REGISTER_STRING_CONSTANT("MECAB_VERSION", (char *)mecab_version(), CONST_PERSISTENT | CONST_CS);
 #define PHP_MECAB_REGISTER_CONSTANT(name) \
@@ -867,6 +880,10 @@ static PHP_MINIT_FUNCTION(mecab)
 static PHP_MSHUTDOWN_FUNCTION(mecab)
 {
 	UNREGISTER_INI_ENTRIES();
+	zend_hash_destroy(&persistents);
+#ifdef ZTS
+	tsrm_mutex_free(php_mecab_mutex);
+#endif
 	return SUCCESS;
 }
 /* }}} */
@@ -894,20 +911,6 @@ static PHP_GINIT_FUNCTION(mecab)
 	mecab_globals->default_rcfile = NULL;
 	mecab_globals->default_dicdir = NULL;
 	mecab_globals->default_userdic = NULL;
-	zend_hash_init(&mecab_globals->persistents, 10, NULL, (dtor_func_t)php_mecab_free_persistent, 1);
-#ifdef ZTS
-	mecab_globals->mutexp = tsrm_mutex_alloc();
-#endif
-}
-/* }}} */
-
-/* {{{ PHP_GSHUTDOWN_FUNCTION */
-static PHP_GSHUTDOWN_FUNCTION(mecab)
-{
-	zend_hash_destroy(&mecab_globals->persistents);
-#ifdef ZTS
-	tsrm_mutex_free(mecab_globals->mutexp);
-#endif
 }
 /* }}} */
 
@@ -1700,7 +1703,7 @@ php_mecab_get_required_attribute(zval *filter TSRMLS_DC)
 	if (Z_TYPE_P(retval) != IS_STRING) {
 		convert_to_string(retval);
 	}
-	if (Z_STRLEN_P(retval) < ANNOTATION_FINDER_LEN) {
+	if ((size_t)Z_STRLEN_P(retval) < ANNOTATION_FINDER_LEN) {
 		zval_ptr_dtor(&retval);
 		return ATTR_ALL;
 	}
@@ -1836,24 +1839,25 @@ php_mecab_register_persistent(char *dicdir_buf TSRMLS_DC)
 	char *argv[3] = { "mecab", NULL, NULL };
 	mecab_t *mecab = NULL;
 	int result = SUCCESS;
+	HashTable *ht = &persistents;
 
 #ifdef ZTS
-	tsrm_mutex_lock(MECAB_G(mutexp));
+	tsrm_mutex_lock(php_mecab_mutex);
 #endif
 
 	if (dicdir_buf[0] == '\0') {
-		if (!zend_hash_index_exists(&MECAB_G(persistents), 0)) {
+		if (!zend_hash_index_exists(ht, 0)) {
 			if ((mecab = mecab_new(1, argv)) != NULL) {
-				zend_hash_index_update(&MECAB_G(persistents), 0, &mecab, sizeof(mecab_t *), NULL);
+				zend_hash_index_update(ht, 0, &mecab, sizeof(mecab_t *), NULL);
 			} else {
 				result = FAILURE;
 			}
 		}
 	} else {
-		if (!zend_hash_exists(&MECAB_G(persistents), dicdir_buf, PATHBUFSIZE)) {
+		if (!zend_hash_exists(ht, dicdir_buf, PATHBUFSIZE)) {
 			argv[1] = dicdir_buf;
 			if ((mecab = mecab_new(2, argv)) != NULL) {
-				zend_hash_update(&MECAB_G(persistents), dicdir_buf, PATHBUFSIZE, &mecab, sizeof(mecab_t *), NULL);
+				zend_hash_update(ht, dicdir_buf, PATHBUFSIZE, &mecab, sizeof(mecab_t *), NULL);
 			} else {
 				result = FAILURE;
 			}
@@ -1861,7 +1865,7 @@ php_mecab_register_persistent(char *dicdir_buf TSRMLS_DC)
 	}
 
 #ifdef ZTS
-	tsrm_mutex_unlock(MECAB_G(mutexp));
+	tsrm_mutex_unlock(php_mecab_mutex);
 #endif
 
 	return result;
@@ -2008,7 +2012,7 @@ static PHP_FUNCTION(mecab_split)
 	const mecab_node_t *node = NULL;
 	int argc = 2;
 	char *argv[5] = { "mecab", "-Owakati", NULL, NULL, NULL };
-	char pathbuf[2][PATHBUFSIZE] = { '\0' };
+	char pathbuf[2][PATHBUFSIZE] = {{'\0'}};
 	char *dicdir_buf = &(pathbuf[0][0]);
 	char *userdic_buf = &(pathbuf[1][0]);
 
@@ -2234,7 +2238,6 @@ static PHP_FUNCTION(mecab_new)
 {
 	/* declaration of the resources */
 	zval *object = getThis();
-	zval *zmecab = NULL;
 	php_mecab *xmecab = NULL;
 	mecab_t *mecab = NULL;
 
@@ -2249,7 +2252,7 @@ static PHP_FUNCTION(mecab_new)
 	char **argv = NULL;
 	int flag_expected = 1;
 	int path_expected = 0;
-	char pathbuf[3][PATHBUFSIZE] = { '\0' };
+	char pathbuf[3][PATHBUFSIZE] = {{'\0'}};
 	char *rcfile_buf = &(pathbuf[0][0]);
 	char *dicdir_buf = &(pathbuf[1][0]);
 	char *userdic_buf = &(pathbuf[2][0]);
@@ -2278,7 +2281,7 @@ static PHP_FUNCTION(mecab_new)
 		while (zend_hash_get_current_data(options, (void **)&entry) == SUCCESS) {
 			convert_to_string_ex(entry);
 
-			switch (zend_hash_get_current_key(options, &key, &idx, 0)) {
+			switch (zend_hash_get_current_key_ex(options, &key, &len, &idx, 0, NULL)) {
 			  case HASH_KEY_IS_STRING:
 				getopt_result = php_mecab_check_option(key);
 				if (getopt_result == FAILURE) {
@@ -3786,7 +3789,6 @@ static PHP_METHOD(MeCab_Node, __get)
 {
 	/* declaration of the resources */
 	zval *object = getThis();
-	zval *znode = NULL;
 	php_mecab_node *xnode = NULL;
 	const mecab_node_t *node = NULL;
 
@@ -3877,7 +3879,6 @@ static PHP_METHOD(MeCab_Node, __isset)
 {
 	/* declaration of the resources */
 	zval *object = getThis();
-	zval *znode = NULL;
 	php_mecab_node *xnode = NULL;
 	const mecab_node_t *node = NULL;
 
@@ -4271,7 +4272,6 @@ static PHP_METHOD(MeCab_Path, __get)
 {
 	/* declaration of the resources */
 	zval *object = getThis();
-	zval *zpath = NULL;
 	php_mecab_path *xpath = NULL;
 	const mecab_path_t *path = NULL;
 
@@ -4331,7 +4331,6 @@ static PHP_METHOD(MeCab_Path, __isset)
 {
 	/* declaration of the resources */
 	zval *object = getThis();
-	zval *zpath = NULL;
 	php_mecab_path *xpath = NULL;
 	const mecab_path_t *path = NULL;
 

@@ -91,11 +91,6 @@ ZEND_BEGIN_MODULE_GLOBALS(mecab)
 	char *default_rcfile;
 	char *default_dicdir;
 	char *default_userdic;
-	HashTable persistents;
-	/* zend_ts_hash is only available in ZendEngine 2 */
-#ifdef ZTS
-	MUTEX_T mutexp;
-#endif
 ZEND_END_MODULE_GLOBALS(mecab)
 
 #ifdef ZTS
