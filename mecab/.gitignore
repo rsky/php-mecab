@@ -1,0 +1,16 @@
+.deps
+.libs/
+Makefile*
+acinclude.m4
+aclocal.m4
+autom4te.cache/
+build/
+config.*
+configure*
+install-sh
+libtool
+ltmain.sh
+missing
+mkinstalldirs
+php_test_results_*.txt
+run-tests.php
