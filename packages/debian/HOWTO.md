@@ -21,9 +21,9 @@ HOW-TO
 3. $ `pear package package.xml`
 4. $ `mv mecab-x.y.z.tgz ../packages/debian/`
 5. $ `cd ../packages/debian` *[HERE]*
-6.. $ `dh-make-pecl --only 5 mecab-x.y.z.tgz`
-7.. $ `cd php-mecab-x.y.z`
-8. Edit 'debian/control'.
+6. $ `dh-make-pecl --only 5 mecab-x.y.z.tgz`
+7. $ `cd php-mecab-x.y.z`
+8. Edit *debian/control*.
     * Add `mecab` and `libmecab-dev` to **Build-Depends**.
     * Add `libmecab1` to **Depends**.
 9. $ `debuild -uc -us`
