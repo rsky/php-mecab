@@ -28,8 +28,8 @@ MAKE A PACKAGE
 
 1. $ `cd php-mecab/mecab`
 2. $ `pear package package.xml`
-3. $ `mv mecab-x.y.z.tgz ../packages/debian/`
-4. $ `cd ../packages/debian`
+3. $ `mv mecab-x.y.z.tgz ../packages/ubuntu/`
+4. $ `cd ../packages/ubuntu`
 5. $ `dh-make-pecl --phpversion 5 mecab-x.y.z.tgz`
 6. $ `cd php-mecab-x.y.z`
 7. Edit *debian/control*.
