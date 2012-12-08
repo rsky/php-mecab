@@ -1443,10 +1443,9 @@ php_mecab_node_get_sibling_wrapper(INTERNAL_FUNCTION_PARAMETERS, php_mecab_node_
 	zval *object = getThis();
 	zval *znode = NULL;
 	php_mecab_node *xnode = NULL;
-	const mecab_node_t *node = NULL;
 
 	/* parse the arguments */
-	PHP_MECAB_NODE_FROM_PARAMETER();
+	PHP_MECAB_NODE_INTERNAL_FROM_PARAMETER();
 
 	php_mecab_node_get_sibling(return_value, object, xnode, rel TSRMLS_CC);
 }
@@ -1462,10 +1461,9 @@ php_mecab_node_get_path_wrapper(INTERNAL_FUNCTION_PARAMETERS, php_mecab_node_rel
 	zval *object = getThis();
 	zval *znode = NULL;
 	php_mecab_node *xnode = NULL;
-	const mecab_node_t *node = NULL;
 
 	/* parse the arguments */
-	PHP_MECAB_NODE_FROM_PARAMETER();
+	PHP_MECAB_NODE_INTERNAL_FROM_PARAMETER();
 
 	php_mecab_node_get_path(return_value, object, xnode, rel TSRMLS_CC);
 }
@@ -1481,10 +1479,9 @@ php_mecab_path_get_sibling_wrapper(INTERNAL_FUNCTION_PARAMETERS, php_mecab_path_
 	zval *object = getThis();
 	zval *zpath = NULL;
 	php_mecab_path *xpath = NULL;
-	const mecab_path_t *path = NULL;
 
 	/* parse the arguments */
-	PHP_MECAB_PATH_FROM_PARAMETER();
+	PHP_MECAB_PATH_INTERNAL_FROM_PARAMETER();
 
 	php_mecab_path_get_sibling(return_value, object, xpath, rel TSRMLS_CC);
 }
@@ -1500,10 +1497,9 @@ php_mecab_path_get_node_wrapper(INTERNAL_FUNCTION_PARAMETERS, php_mecab_path_rel
 	zval *object = getThis();
 	zval *zpath = NULL;
 	php_mecab_path *xpath = NULL;
-	const mecab_path_t *path = NULL;
 
 	/* parse the arguments */
-	PHP_MECAB_PATH_FROM_PARAMETER();
+	PHP_MECAB_PATH_INTERNAL_FROM_PARAMETER();
 
 	php_mecab_path_get_node(return_value, object, xpath, rel TSRMLS_CC);
 }

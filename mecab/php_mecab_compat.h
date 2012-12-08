@@ -6,7 +6,7 @@
 
 #define PHP_MECAB_FETCH_OBJECT(ptr, type, zv) ptr = (type)zend_object_store_get_object((zv) TSRMLS_CC)
 
-#define PHP_MECAB_RSRC_FROM_PARAMETER() { \
+#define PHP_MECAB_INTERNAL_RSRC_FROM_PARAMETER() { \
 	if (object) { \
 		zmecab = object; \
 		if (ZEND_NUM_ARGS() != 0) { \
@@ -22,10 +22,13 @@
 		} \
 		ZEND_FETCH_RESOURCE(xmecab, php_mecab *, &zmecab, -1, "mecab", le_mecab); \
 	} \
-	mecab = xmecab->ptr; \
 }
 
-#define PHP_MECAB_RSRC_FROM_PARAMETER2(name) { \
+#define PHP_MECAB_RSRC_FROM_PARAMETER() \
+	PHP_MECAB_INTERNAL_RSRC_FROM_PARAMETER() \
+	mecab = xmecab->ptr; \
+
+#define PHP_MECAB_INTERNAL_RSRC_FROM_PARAMETER2(name) { \
 	if (object) { \
 		z##name = object; \
 		if (ZEND_NUM_ARGS() != 0) { \
@@ -41,8 +44,11 @@
 		} \
 		ZEND_FETCH_RESOURCE(x##name, php_mecab_##name *, &z##name, -1, "mecab_" #name, le_mecab_##name); \
 	} \
-	name = x##name->ptr; \
 }
+
+#define PHP_MECAB_RSRC_FROM_PARAMETER2(name) \
+	PHP_MECAB_INTERNAL_RSRC_FROM_PARAMETER2(name) \
+	name = x##name->ptr;
 
 #define PHP_MECAB_PARSE_PARAMETERS(fmt, ...) { \
 	if (object) { \
@@ -108,6 +114,10 @@
 #define PHP_MECAB_FROM_PARAMETER()	PHP_MECAB_RSRC_FROM_PARAMETER()
 #define PHP_MECAB_NODE_FROM_PARAMETER()	PHP_MECAB_RSRC_FROM_PARAMETER2(node)
 #define PHP_MECAB_PATH_FROM_PARAMETER()	PHP_MECAB_RSRC_FROM_PARAMETER2(path)
+
+#define PHP_MECAB_INTERNAL_FROM_PARAMETER()	PHP_MECAB_INTERNAL_RSRC_FROM_PARAMETER()
+#define PHP_MECAB_NODE_INTERNAL_FROM_PARAMETER()	PHP_MECAB_INTERNAL_RSRC_FROM_PARAMETER2(node)
+#define PHP_MECAB_PATH_INTERNAL_FROM_PARAMETER()	PHP_MECAB_INTERNAL_RSRC_FROM_PARAMETER2(path)
 
 #define PHP_MECAB_NODE_PARSE_PARAMETERS(fmt, ...)	PHP_MECAB_PARSE_PARAMETERS2(node, fmt, __VA_ARGS__)
 #define PHP_MECAB_PATH_PARSE_PARAMETERS(fmt, ...)	PHP_MECAB_PARSE_PARAMETERS2(path, fmt, __VA_ARGS__)
