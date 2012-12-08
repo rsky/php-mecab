@@ -41,6 +41,6 @@ MAKE A PACKAGE
 INSTALL
 -------
 
-The .deb file will be generated at *php-mecab/packages/debian*.
+The .deb file will be generated at *php-mecab/packages/ubuntu*.
 
 $ `sudo dpkg -i php5-mecab_x.y.z-1_{amd64,i386}.deb`

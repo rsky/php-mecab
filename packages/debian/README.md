@@ -1,4 +1,4 @@
-How to make debian package of php-mecab
+How to make Debian package of php-mecab
 =======================================
 
 REQUIREMENTS
