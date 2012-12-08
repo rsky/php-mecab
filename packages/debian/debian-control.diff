@@ -1,0 +1,17 @@
+--- debian/control.orig
++++ debian/control
+@@ -2,12 +2,12 @@
+ Section: web
+ Priority: optional
+ Maintainer: Ryusuke SEKIYAMA <rsky0711@gmail.com>
+-Build-Depends: debhelper (>= 7), po-debconf, xsltproc , php5-dev  
++Build-Depends: debhelper (>= 7), po-debconf, xsltproc , php5-dev, mecab, libmecab-dev 
+ Standards-Version: 3.8.1
+ 
+ Package: php5-mecab
+ Architecture: any
+-Depends: ${shlibs:Depends}, ${php:Depends}, ${misc:Depends}
++Depends: ${shlibs:Depends}, ${php:Depends}, ${misc:Depends}, libmecab1
+ Description: mecab module for PHP 5
+  The PHP bindings of the MeCab.
+  .
