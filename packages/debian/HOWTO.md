@@ -13,19 +13,33 @@ REQUIREMENTS
 * php5-dev
 * xsltproc
 
-HOW-TO
-------
 
-1. $ `sudo pear channel-discover pecl.opendogs.org`
-2. $ `cd php-mecab/mecab`
-3. $ `pear package package.xml`
-4. $ `mv mecab-x.y.z.tgz ../packages/debian/`
-5. $ `cd ../packages/debian` *[HERE]*
-6. $ `dh-make-pecl --only 5 mecab-x.y.z.tgz`
-7. $ `cd php-mecab-x.y.z`
-8. Edit *debian/control*.
+PREPARE
+-------
+
+You will have to discover the PEAR channel.
+
+$ `sudo pear channel-discover pecl.opendogs.org`
+
+
+MAKE A PACKAGE
+--------------
+
+1. $ `cd php-mecab/mecab`
+2. $ `pear package package.xml`
+3. $ `mv mecab-x.y.z.tgz ../packages/debian/`
+4. $ `cd ../packages/debian`
+5. $ `dh-make-pecl --only 5 mecab-x.y.z.tgz`
+6. $ `cd php-mecab-x.y.z`
+7. Edit *debian/control*.
     * Add `mecab` and `libmecab-dev` to **Build-Depends**.
     * Add `libmecab1` to **Depends**.
-9. $ `debuild -uc -us`
-10. $ `cd ..` *[HERE]*
-11. $ `sudo dpkg -i php5-mecab_x.y.z-1_{amd64,i386}.deb`
+8. $ `debuild -uc -us` *[without GPG signing]*
+
+
+INSTALL
+-------
+
+The .deb file will be generated at *php-mecab/packages/debian*.
+
+$ `sudo dpkg -i php5-mecab_x.y.z-1_{amd64,i386}.deb`
