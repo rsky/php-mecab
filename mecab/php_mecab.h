@@ -136,8 +136,12 @@ enum _php_mecab_path_rel {
 
 struct _php_mecab {
 	mecab_t *ptr;
+#if PHP_VERSION_ID >= 70000
+	zend_string *str;
+#else
 	char *str;
 	int len;
+#endif
 	int ref;
 };
 

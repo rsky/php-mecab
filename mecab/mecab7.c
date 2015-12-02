@@ -172,7 +172,7 @@ php_mecab_dtor(php_mecab *mecab TSRMLS_DC);
 
 /* set string to the mecab */
 static void
-php_mecab_set_string(php_mecab *mecab, const char *str, int len TSRMLS_DC);
+php_mecab_set_string(php_mecab *mecab, zend_string *str TSRMLS_DC);
 
 /* allocate for mecab_node */
 static php_mecab_node *
@@ -786,7 +786,6 @@ php_mecab_ctor(TSRMLS_D)
 
 	mecab->ptr = NULL;
 	mecab->str = NULL;
-	mecab->len = 0;
 	mecab->ref = 1;
 
 	return mecab;
@@ -802,7 +801,7 @@ php_mecab_dtor(php_mecab *mecab TSRMLS_DC)
 	mecab->ref--;
 	if (mecab->ref == 0) {
 		if (mecab->str != NULL) {
-			efree(mecab->str);
+			zend_string_free(mecab->str);
 		}
 		mecab_destroy(mecab->ptr);
 		efree(mecab);
@@ -814,17 +813,15 @@ php_mecab_dtor(php_mecab *mecab TSRMLS_DC)
  * set string to the mecab
  */
 static void
-php_mecab_set_string(php_mecab *mecab, const char *str, int len TSRMLS_DC)
+php_mecab_set_string(php_mecab *mecab, zend_string *str TSRMLS_DC)
 {
 	if (mecab->str != NULL) {
-		efree(mecab->str);
+		zend_string_free(str);
 	}
 	if (str == NULL) {
 		mecab->str = NULL;
-		mecab->len = 0;
 	} else {
-		mecab->str = estrndup(str, len);
-		mecab->len = (size_t)len;
+		mecab->str = zend_string_dup(str, 0);
 	}
 }
 /* }}} */
@@ -1684,8 +1681,10 @@ static PHP_FUNCTION(mecab_split)
 {
 	/* variables from argument */
 	zend_string *str = NULL;
+	zend_string *zdicdir = NULL;
 	const char *dicdir = NULL;
 	int dicdir_len = 0;
+	zend_string *zuserdic = NULL;
 	const char *userdic = NULL;
 	int userdic_len = 0;
 	zval *filter = NULL;
@@ -1701,9 +1700,8 @@ static PHP_FUNCTION(mecab_split)
 	char *userdic_buf = &(pathbuf[1][0]);
 
 	/* parse arguments */
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "S|s!s!z/b",
-			&str, &dicdir, &dicdir_len, &userdic, &userdic_len,
-			&filter, &persistent) == FAILURE)
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "S|S!S!z/b",
+			&str, &zdicdir, &zuserdic, &filter, &persistent) == FAILURE)
 	{
 		return;
 	}
@@ -1719,11 +1717,17 @@ static PHP_FUNCTION(mecab_split)
 	}
 
 	/* apply default options */
-	if (dicdir_len == 0 && PHP_MECAB_CHECK_DEFAULT(dicdir)) {
+	if (zdicdir != NULL && ZSTR_LEN(zdicdir) > 0) {
+		dicdir = ZSTR_VAL(zdicdir);
+		dicdir_len = ZSTR_LEN(zdicdir);
+	} else if (PHP_MECAB_CHECK_DEFAULT(dicdir)) {
 		dicdir = MECAB_G(default_dicdir);
 		dicdir_len = (int)strlen(MECAB_G(default_dicdir));
 	}
-	if (dicdir_len == 0 && PHP_MECAB_CHECK_DEFAULT(userdic)) {
+	if (zuserdic != NULL && ZSTR_LEN(zuserdic) > 0) {
+		userdic = ZSTR_VAL(zuserdic);
+		userdic_len = ZSTR_LEN(zuserdic);
+	} else if (PHP_MECAB_CHECK_DEFAULT(userdic)) {
 		userdic = MECAB_G(default_userdic);
 		userdic_len = (int)strlen(MECAB_G(default_userdic));
 	}
@@ -2318,8 +2322,7 @@ static PHP_FUNCTION(mecab_sparse_tostr)
 	mecab_t *mecab = NULL;
 
 	/* declaration of the arguments */
-	const char *str = NULL;
-	int str_len = 0;
+	zend_string *str = NULL;
 	long len = 0;
 	long olen = 0;
 
@@ -2329,16 +2332,16 @@ static PHP_FUNCTION(mecab_sparse_tostr)
 	zend_bool ostr_free = 0;
 
 	/* parse the arguments */
-	PHP_MECAB_PARSE_PARAMETERS("s|ll", &str, &str_len, &len, &olen);
+	PHP_MECAB_PARSE_PARAMETERS("S|ll", &str, &len, &olen);
 
 	/* call mecab_sparse_tostr() */
-	php_mecab_set_string(xmecab, str, str_len TSRMLS_CC);
-	ilen = (size_t)((len > 0) ? MIN(len, (long)str_len) : str_len);
+	php_mecab_set_string(xmecab, str TSRMLS_CC);
+	ilen = (size_t)((len > 0) ? MIN(len, (long)ZSTR_LEN(str)) : ZSTR_LEN(str));
 	if (olen == 0) {
-		ostr = (char *)mecab_sparse_tostr2(mecab, xmecab->str, ilen);
+		ostr = (char *)mecab_sparse_tostr2(mecab, ZSTR_VAL(xmecab->str), ilen);
 	} else {
 		ostr = (char *)emalloc((size_t)olen + 1);
-		ostr = mecab_sparse_tostr3(mecab, xmecab->str, ilen, ostr, (size_t)olen);
+		ostr = mecab_sparse_tostr3(mecab, ZSTR_VAL(xmecab->str), ilen, ostr, (size_t)olen);
 		ostr_free = 1;
 	}
 
@@ -2378,8 +2381,7 @@ static PHP_FUNCTION(mecab_sparse_tonode)
 	mecab_t *mecab = NULL;
 
 	/* declaration of the arguments */
-	const char *str = NULL;
-	int str_len = 0;
+	zend_string *str = NULL;
 	long len = 0;
 
 	/* declaration of the local variables */
@@ -2388,12 +2390,12 @@ static PHP_FUNCTION(mecab_sparse_tonode)
 	php_mecab_node *xnode = NULL;
 
 	/* parse the arguments */
-	PHP_MECAB_PARSE_PARAMETERS("s|l", &str, &str_len, &len);
+	PHP_MECAB_PARSE_PARAMETERS("S|l", &str, &len);
 
 	/* call mecab_sparse_tonode() */
-	php_mecab_set_string(xmecab, str, str_len TSRMLS_CC);
-	ilen = (size_t)((len > 0) ? MIN(len, (long)str_len) : str_len);
-	node = mecab_sparse_tonode2(mecab, xmecab->str, ilen);
+	php_mecab_set_string(xmecab, str TSRMLS_CC);
+	ilen = (size_t)((len > 0) ? MIN(len, (long)ZSTR_LEN(str)) : ZSTR_LEN(str));
+	node = mecab_sparse_tonode2(mecab, ZSTR_VAL(xmecab->str), ilen);
 	if (node == NULL) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "%s", mecab_strerror(mecab));
 		RETURN_FALSE;
@@ -2436,8 +2438,7 @@ static PHP_FUNCTION(mecab_nbest_sparse_tostr)
 
 	/* declaration of the arguments */
 	long n = 0;
-	const char *str = NULL;
-	int str_len = 0;
+	zend_string *str = NULL;
 	long len = 0;
 	long olen = 0;
 
@@ -2447,16 +2448,16 @@ static PHP_FUNCTION(mecab_nbest_sparse_tostr)
 	zend_bool ostr_free = 1;
 
 	/* parse the arguments */
-	PHP_MECAB_PARSE_PARAMETERS("ls|ll", &n, &str, &str_len, &len, &olen);
+	PHP_MECAB_PARSE_PARAMETERS("lS|ll", &n, &str, &len, &olen);
 
 	/* call mecab_nbest_sparse_tostr() */
-	php_mecab_set_string(xmecab, str, str_len TSRMLS_CC);
-	ilen = (size_t)((len > 0) ? MIN(len, (long)str_len) : str_len);
+	php_mecab_set_string(xmecab, str TSRMLS_CC);
+	ilen = (size_t)((len > 0) ? MIN(len, (long)ZSTR_LEN(str)) : ZSTR_LEN(str));
 	if (olen == 0) {
-		ostr = (char *)mecab_nbest_sparse_tostr2(mecab, n, xmecab->str, ilen);
+		ostr = (char *)mecab_nbest_sparse_tostr2(mecab, n, ZSTR_VAL(xmecab->str), ilen);
 	} else {
 		ostr = (char *)emalloc(olen + 1);
-		ostr = mecab_nbest_sparse_tostr3(mecab, n, xmecab->str, ilen, ostr, (size_t)olen);
+		ostr = mecab_nbest_sparse_tostr3(mecab, n, ZSTR_VAL(xmecab->str), ilen, ostr, (size_t)olen);
 		ostr_free = 1;
 	}
 
@@ -2496,8 +2497,7 @@ static PHP_FUNCTION(mecab_nbest_init)
 	mecab_t *mecab = NULL;
 
 	/* declaration of the arguments */
-	const char *str = NULL;
-	int str_len = 0;
+	zend_string *str = NULL;
 	long len = 0;
 
 	/* declaration of the local variables */
@@ -2505,12 +2505,12 @@ static PHP_FUNCTION(mecab_nbest_init)
 	int result = 0;
 
 	/* parse the arguments */
-	PHP_MECAB_PARSE_PARAMETERS("s|l", &str, &str_len, &len);
+	PHP_MECAB_PARSE_PARAMETERS("S|l", &str, &len);
 
 	/* call mecab_nbest_init() */
-	php_mecab_set_string(xmecab, str, str_len TSRMLS_CC);
-	ilen = (size_t)((len > 0) ? MIN(len, (long)str_len) : str_len);
-	result = mecab_nbest_init2(mecab, xmecab->str, ilen);
+	php_mecab_set_string(xmecab, str TSRMLS_CC);
+	ilen = (size_t)((len > 0) ? MIN(len, (long)ZSTR_LEN(str)) : ZSTR_LEN(str));
+	result = mecab_nbest_init2(mecab, ZSTR_VAL(xmecab->str), ilen);
 	if (result == 0) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "%s", mecab_strerror(mecab));
 		RETURN_FALSE;
@@ -2707,7 +2707,6 @@ static PHP_FUNCTION(mecab_dictionary_info)
 
 	/* parse the arguments */
 	PHP_MECAB_FROM_PARAMETER();
-
 	/* get dictionary information */
 	dicinfo = mecab_dictionary_info(mecab);
 	if (dicinfo == NULL) {
@@ -2761,6 +2760,7 @@ static PHP_FUNCTION(mecab_node_toarray)
 
 	/* parse the arguments */
 	PHP_MECAB_NODE_PARSE_PARAMETERS("|b", &dump_all);
+	node = xnode->ptr;
 
 	/* initialize */
 	array_init(return_value);
@@ -2777,7 +2777,7 @@ static PHP_FUNCTION(mecab_node_toarray)
 
 	/* assign node info */
 	add_assoc_stringl(return_value, "surface", (char *)node->surface, (int)node->length);
-	add_assoc_string(return_value,  "feature", (char *)node->feature);
+	add_assoc_stringl(return_value, "feature", (char *)node->feature, (int)strlen(node->feature));
 	add_assoc_long(return_value, "id",         (long)node->id);
 	add_assoc_long(return_value, "length",     (long)node->length);
 	add_assoc_long(return_value, "rlength",    (long)node->rlength);
@@ -3342,16 +3342,17 @@ static PHP_METHOD(MeCab_Node, __get)
 	const mecab_node_t *node = NULL;
 
 	/* declaration of the arguments */
-	char *name = NULL;
-	int name_len = 0;
+	zend_string *zname = NULL;
+	const char *name = NULL;
 
 	/* parse the arguments */
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "S", &zname) == FAILURE) {
 		return;
 	} else {
 		php_mecab_node_object *intern = PHP_MECAB_NODE_OBJECT_P(object);
 		xnode = intern->ptr;
 		node = xnode->ptr;
+		name = ZSTR_VAL(zname);
 	}
 
 	/* check for given property name */
@@ -3422,16 +3423,17 @@ static PHP_METHOD(MeCab_Node, __isset)
 	const mecab_node_t *node = NULL;
 
 	/* declaration of the arguments */
-	char *name = NULL;
-	int name_len = 0;
+	zend_string *zname = NULL;
+	const char *name = NULL;
 
 	/* parse the arguments */
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "S", &zname) == FAILURE) {
 		return;
 	} else {
 		php_mecab_node_object *intern = PHP_MECAB_NODE_OBJECT_P(object);
 		xnode = intern->ptr;
 		node = xnode->ptr;
+		name = ZSTR_VAL(zname);
 	}
 
 	/* check for given property name */
@@ -3484,7 +3486,7 @@ static PHP_METHOD(MeCab_Node, getIterator)
 	php_mecab_node_object *newobj;
 	php_mecab_node *newnode;
 
-	intern = (php_mecab_node_object *)Z_OBJ_P(getThis());
+	intern = PHP_MECAB_NODE_OBJECT_P(getThis());
 	xnode = intern->ptr;
 	node = xnode->ptr;
 
@@ -3536,7 +3538,7 @@ static PHP_METHOD(MeCab_Node, setTraverse)
 	php_std_error_handling();
 #endif
 
-	intern = (php_mecab_node_object *)Z_OBJ_P(getThis());
+	intern = PHP_MECAB_NODE_OBJECT_P(getThis());
 
 	if (traverse == (long)TRAVERSE_NEXT ||
 		traverse == (long)TRAVERSE_ENEXT ||
@@ -3590,7 +3592,7 @@ static PHP_METHOD(MeCab_NodeIterator, current)
 	if (ZEND_NUM_ARGS() != 0) {
 		WRONG_PARAM_COUNT;
 	}
-	intern = (php_mecab_node_object *)Z_OBJ_P(getThis());
+	intern = PHP_MECAB_NODE_OBJECT_P(getThis());
 	xnode = intern->ptr;
 	node = xnode->ptr;
 
@@ -3627,7 +3629,7 @@ static PHP_METHOD(MeCab_NodeIterator, key)
 	if (ZEND_NUM_ARGS() != 0) {
 		WRONG_PARAM_COUNT;
 	}
-	intern = (php_mecab_node_object *)Z_OBJ_P(getThis());
+	intern = PHP_MECAB_NODE_OBJECT_P(getThis());
 	xnode = intern->ptr;
 	node = xnode->ptr;
 
@@ -3659,7 +3661,7 @@ static PHP_METHOD(MeCab_NodeIterator, next)
 	if (ZEND_NUM_ARGS() != 0) {
 		WRONG_PARAM_COUNT;
 	}
-	intern = (php_mecab_node_object *)Z_OBJ_P(getThis());
+	intern = PHP_MECAB_NODE_OBJECT_P(getThis());
 	xnode = intern->ptr;
 	node = xnode->ptr;
 
@@ -3702,7 +3704,7 @@ static PHP_METHOD(MeCab_NodeIterator, rewind)
 	if (ZEND_NUM_ARGS() != 0) {
 		WRONG_PARAM_COUNT;
 	}
-	intern = (php_mecab_node_object *)Z_OBJ_P(getThis());
+	intern = PHP_MECAB_NODE_OBJECT_P(getThis());
 	xnode = intern->ptr;
 	xnode->ptr = intern->root;
 }
@@ -3728,7 +3730,7 @@ static PHP_METHOD(MeCab_NodeIterator, valid)
 	if (ZEND_NUM_ARGS() != 0) {
 		WRONG_PARAM_COUNT;
 	}
-	intern = (php_mecab_node_object *)Z_OBJ_P(getThis());
+	intern = PHP_MECAB_NODE_OBJECT_P(getThis());
 	xnode = intern->ptr;
 	node = xnode->ptr;
 
@@ -3776,16 +3778,17 @@ static PHP_METHOD(MeCab_Path, __get)
 	const mecab_path_t *path = NULL;
 
 	/* declaration of the arguments */
-	char *name = NULL;
-	int name_len = 0;
+	zend_string *zname = NULL;
+	const char *name = NULL;
 
 	/* parse the arguments */
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "S", &zname) == FAILURE) {
 		return;
 	} else {
 		php_mecab_path_object *intern = PHP_MECAB_PATH_OBJECT_P(object);
 		xpath = intern->ptr;
 		path = xpath->ptr;
+		name = ZSTR_VAL(zname);
 	}
 
 	/* check for given property name */
@@ -3834,16 +3837,17 @@ static PHP_METHOD(MeCab_Path, __isset)
 	const mecab_path_t *path = NULL;
 
 	/* declaration of the arguments */
-	char *name = NULL;
-	int name_len = 0;
+	zend_string *zname = NULL;
+	const char *name = NULL;
 
 	/* parse the arguments */
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "S", &zname) == FAILURE) {
 		return;
 	} else {
 		php_mecab_path_object *intern = PHP_MECAB_PATH_OBJECT_P(object);
 		xpath = intern->ptr;
 		path = xpath->ptr;
+		name = ZSTR_VAL(zname);
 	}
 
 	/* check for given property name */
