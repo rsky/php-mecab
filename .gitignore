@@ -40,6 +40,7 @@ Thumbs.db
 ehthumbs.db
 nbproject
 .cache
+.idea
 .project
 .settings
 .tmproj
