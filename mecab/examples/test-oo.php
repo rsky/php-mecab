@@ -27,22 +27,6 @@ foreach ($t->parseToNode($sentence) as $m) {
 }
 writeln('EOS');
 
-$n = $t->parseToNode($sentence);
-$len = $n->sentence_length;
-for ($i = 0; $i <= $len; $i++) {
-    $b = $n->getBeginNodeList($i);
-    $e = $n->getEndNodeList($i);
-    while ($b) {
-        writefln("B[%d] %s\t%s", $i, $b->surface, $b->feature);
-        $b = $b->bnext;
-    }
-    while ($e) {
-        writefln("E[%d] %s\t%s", $i, $e->surface, $e->feature);
-        $e = $e->bnext;
-    }
-}
-writeln('EOS');
-
 $di = $t->dictionaryInfo();
 foreach ($di as $d) {
     writefln('filename: %s', $d['filename']);

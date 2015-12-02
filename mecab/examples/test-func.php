@@ -28,22 +28,6 @@ while ($m) {
 }
 writeln('EOS');
 
-$n = mecab_sparse_tonode($t, $sentence);
-$len = mecab_node_sentence_length($n);
-for ($i = 0; $i <= $len; $i++) {
-    $b = mecab_node_begin_node_list($n, $i);
-    $e = mecab_node_end_node_list($n, $i);
-    while ($b) {
-        writefln("B[%d] %s\t%s", $i, mecab_node_surface($b), mecab_node_feature($b));
-        $b = mecab_node_bnext($b);
-    }
-    while ($e) {
-        writefln("E[%d] %s\t%s", $i, mecab_node_surface($e), mecab_node_feature($e));
-        $e = mecab_node_bnext($e);
-    }
-}
-writeln('EOS');
-
 $di = mecab_dictionary_info($t);
 foreach ($di as $d) {
     writefln('filename: %s', $d['filename']);
