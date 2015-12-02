@@ -39,12 +39,6 @@ extern "C" {
 #include "config.h"
 #endif
 
-#if PHP_MECAB_VERSION_NUMBER == 99 || PHP_MECAB_VERSION_NUMBER >= 990
-#define PHP_MECAB_99X 1
-#else
-#define PHP_MECAB_99X 0
-#endif
-
 #include <php.h>
 
 #include <php_ini.h>
@@ -78,12 +72,6 @@ extern "C" {
 #endif
 
 #define FREE_RESOURCE(resource) zend_list_delete(Z_RESVAL_P(resource))
-
-#if PHP_VERSION_ID >= 50300
-#define IS_CALLABLE_TSRMLS_CC TSRMLS_CC
-#else
-#define IS_CALLABLE_TSRMLS_CC
-#endif
 
 /* {{{ module globals */
 
@@ -123,9 +111,6 @@ enum _php_mecab_node_attribute {
 	ATTR_CHAR_TYPE,
 	ATTR_STAT,
 	ATTR_ISBEST,
-#if !PHP_MECAB_99X
-	ATTR_SENTENCE_LENGTH,
-#endif
 	ATTR_ALPHA,
 	ATTR_BETA,
 	ATTR_PROB,

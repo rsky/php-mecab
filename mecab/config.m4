@@ -16,21 +16,6 @@ if test "$PHP_MECAB" != "no"; then
   fi
 
   dnl
-  dnl Check PHP version
-  dnl
-  export OLD_CPPFLAGS="$CPPFLAGS"
-  export CPPFLAGS="$CPPFLAGS $INCLUDES"
-  AC_MSG_CHECKING([PHP version])
-  AC_TRY_COMPILE([#include <php_version.h>], [
-#if !defined(PHP_VERSION_ID) || PHP_VERSION_ID < 50200
-#error this extension requires at least PHP version 5.2.0
-#endif
-],
-    [AC_MSG_RESULT([ok])],
-    [AC_MSG_ERROR([need at least PHP 5.2.0])])
-  export CPPFLAGS="$OLD_CPPFLAGS"
-
-  dnl
   dnl Check the location of mecab-config
   dnl
   if test "$PHP_MECAB" != "yes"; then
@@ -67,9 +52,9 @@ if test "$PHP_MECAB" != "no"; then
 
   MECAB_VERSION_NUMBER=`echo $MECAB_VERSION_STRING | $AWK -F. '{ printf "%d", $1 * 1000 + $2 }'`
 
-  if test "$MECAB_VERSION_NUMBER" -lt 94; then
+  if test "$MECAB_VERSION_NUMBER" -ne 99 -a "$MECAB_VERSION_NUMBER" -lt 99; then
     AC_MSG_RESULT([$MECAB_VERSION_STRING])
-    AC_MSG_ERROR([MeCab version 0.94 or later is required to compile php with MeCab support])
+    AC_MSG_ERROR([MeCab version 0.99 or later is required to compile php with MeCab support])
   fi
 
   AC_DEFINE_UNQUOTED(PHP_MECAB_VERSION_NUMBER, $MECAB_VERSION_NUMBER, [MeCab library version number])
@@ -101,5 +86,13 @@ if test "$PHP_MECAB" != "no"; then
   export LIBS="$OLD_LIBS"
 
   PHP_SUBST(MECAB_SHARED_LIBADD)
-  PHP_NEW_EXTENSION(mecab, mecab.c , $ext_shared)
+  PHP_MECAB_PHP_VERSION=`$PHP_CONFIG --version 2>/dev/null`
+  PHP_MECAB_PHP_VERNUM=`$PHP_CONFIG --vernum 2>/dev/null`
+  AC_MSG_CHECKING([for PHP version])
+  AC_MSG_RESULT([build for $PHP_MECAB_PHP_VERSION])
+  if test "$PHP_MECAB_PHP_VERNUM" -ge 70000; then
+    PHP_NEW_EXTENSION(mecab, mecab7.c , $ext_shared)
+  else
+    PHP_NEW_EXTENSION(mecab, mecab5.c , $ext_shared)
+  fi
 fi

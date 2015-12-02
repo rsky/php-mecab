@@ -29,7 +29,7 @@
  */
 
 #include "php_mecab.h"
-#include "php_mecab_compat.h"
+#include "php_mecab_compat5.h"
 
 #define PATHBUFSIZE (MAXPATHLEN + 3)
 
@@ -89,7 +89,6 @@ static PHP_FUNCTION(mecab_split);
 /* MeCab API wrappers */
 static PHP_FUNCTION(mecab_new);
 static PHP_FUNCTION(mecab_destroy);
-#if PHP_MECAB_VERSION_NUMBER >= 97
 static PHP_FUNCTION(mecab_get_partial);
 static PHP_FUNCTION(mecab_set_partial);
 static PHP_FUNCTION(mecab_get_theta);
@@ -98,7 +97,6 @@ static PHP_FUNCTION(mecab_get_lattice_level);
 static PHP_FUNCTION(mecab_set_lattice_level);
 static PHP_FUNCTION(mecab_get_all_morphs);
 static PHP_FUNCTION(mecab_set_all_morphs);
-#endif /* MeCab 0.97 or later */
 static PHP_FUNCTION(mecab_sparse_tostr);
 static PHP_FUNCTION(mecab_sparse_tonode);
 static PHP_FUNCTION(mecab_nbest_sparse_tostr);
@@ -117,10 +115,6 @@ static PHP_FUNCTION(mecab_node_enext);
 static PHP_FUNCTION(mecab_node_bnext);
 static PHP_FUNCTION(mecab_node_rpath);
 static PHP_FUNCTION(mecab_node_lpath);
-#if !PHP_MECAB_99X
-static PHP_FUNCTION(mecab_node_begin_node_list);
-static PHP_FUNCTION(mecab_node_end_node_list);
-#endif
 static PHP_FUNCTION(mecab_node_surface);
 static PHP_FUNCTION(mecab_node_feature);
 static PHP_FUNCTION(mecab_node_id);
@@ -132,9 +126,6 @@ static PHP_FUNCTION(mecab_node_posid);
 static PHP_FUNCTION(mecab_node_char_type);
 static PHP_FUNCTION(mecab_node_stat);
 static PHP_FUNCTION(mecab_node_isbest);
-#if !PHP_MECAB_99X
-static PHP_FUNCTION(mecab_node_sentence_length);
-#endif
 static PHP_FUNCTION(mecab_node_alpha);
 static PHP_FUNCTION(mecab_node_beta);
 static PHP_FUNCTION(mecab_node_prob);
@@ -160,10 +151,6 @@ static PHP_METHOD(MeCab_Node, __isset);
 /* IteratorAggregate implementations for mecab_node */
 static PHP_METHOD(MeCab_Node, getIterator);
 static PHP_METHOD(MeCab_Node, setTraverse);
-#if !PHP_MECAB_99X
-static PHP_METHOD(MeCab_Node, getBeginNodeList);
-static PHP_METHOD(MeCab_Node, getEndNodeList);
-#endif
 /* Iterator implementations for mecab_node */
 static PHP_METHOD(MeCab_NodeIterator, __construct);
 static PHP_METHOD(MeCab_NodeIterator, current);
@@ -250,16 +237,6 @@ php_mecab_node_get_path_wrapper(INTERNAL_FUNCTION_PARAMETERS, php_mecab_node_rel
 php_mecab_path_get_sibling_wrapper(INTERNAL_FUNCTION_PARAMETERS, php_mecab_path_rel rel),
 php_mecab_path_get_node_wrapper(INTERNAL_FUNCTION_PARAMETERS, php_mecab_path_rel rel);
 
-#if !PHP_MECAB_99X
-/* get begin/end node list resource from mecab_node */
-static void
-php_mecab_node_list_func(INTERNAL_FUNCTION_PARAMETERS, zend_bool end);
-
-/* get begin/end node list object from mecab_node */
-static void
-php_mecab_node_list_method(INTERNAL_FUNCTION_PARAMETERS, zend_bool end);
-#endif
-
 /* allocate for mecab object */
 zend_object_value
 php_mecab_object_new(zend_class_entry *ce TSRMLS_DC);
@@ -310,18 +287,10 @@ php_mecab_free_persistent(mecab_t **mecab_ptr_ptr);
 
 /* {{{ argument informations */
 
-#if PHP_VERSION_ID < 50300
-#define ARG_INFO_STATIC static
-#else
-#define ARG_INFO_STATIC
-#endif
-
-ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab__mecab, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
 	ZEND_ARG_INFO(0, mecab)
 ZEND_END_ARG_INFO()
 
-ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_split, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
 	ZEND_ARG_INFO(0, str)
 	ZEND_ARG_INFO(0, dicdir)
@@ -330,59 +299,47 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_split, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE,
 	ZEND_ARG_INFO(0, persistent)
 ZEND_END_ARG_INFO()
 
-ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_new, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
 	ZEND_ARG_ARRAY_INFO(0, arg, 1)
 	ZEND_ARG_INFO(0, persistent)
 ZEND_END_ARG_INFO()
 
-#if PHP_MECAB_VERSION_NUMBER >= 97
-ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_set_partial, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
 	ZEND_ARG_INFO(0, mecab)
 	ZEND_ARG_INFO(0, partial)
 ZEND_END_ARG_INFO()
 
-ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_set_partial_m, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
 	ZEND_ARG_INFO(0, partial)
 ZEND_END_ARG_INFO()
 
-ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_set_theta, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
 	ZEND_ARG_INFO(0, mecab)
 	ZEND_ARG_INFO(0, theta)
 ZEND_END_ARG_INFO()
 
-ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_set_theta_m, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
 	ZEND_ARG_INFO(0, theta)
 ZEND_END_ARG_INFO()
 
-ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_set_lattice_level, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
 	ZEND_ARG_INFO(0, mecab)
 	ZEND_ARG_INFO(0, level)
 ZEND_END_ARG_INFO()
 
-ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_set_lattice_level_m, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
 	ZEND_ARG_INFO(0, level)
 ZEND_END_ARG_INFO()
 
-ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_set_all_morphs, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
 	ZEND_ARG_INFO(0, mecab)
 	ZEND_ARG_INFO(0, all_morphs)
 ZEND_END_ARG_INFO()
 
-ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_set_all_morphs_m, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
 	ZEND_ARG_INFO(0, all_morphs)
 ZEND_END_ARG_INFO()
-#endif /* MeCab 0.97 or later */
 
-ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_sparse_tostr, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 2)
 	ZEND_ARG_INFO(0, mecab)
 	ZEND_ARG_INFO(0, str)
@@ -390,27 +347,23 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_sparse_tostr, ZEND_SEND_BY_VAL, ZEND_RETURN
 	ZEND_ARG_INFO(0, olen)
 ZEND_END_ARG_INFO()
 
-ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_sparse_tostr_m, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
 	ZEND_ARG_INFO(0, str)
 	ZEND_ARG_INFO(0, len)
 	ZEND_ARG_INFO(0, olen)
 ZEND_END_ARG_INFO()
 
-ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_sparse_tonode, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 2)
 	ZEND_ARG_INFO(0, mecab)
 	ZEND_ARG_INFO(0, str)
 	ZEND_ARG_INFO(0, len)
 ZEND_END_ARG_INFO()
 
-ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_sparse_tonode_m, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
 	ZEND_ARG_INFO(0, str)
 	ZEND_ARG_INFO(0, len)
 ZEND_END_ARG_INFO()
 
-ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_nbest_sparse_tostr, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 3)
 	ZEND_ARG_INFO(0, mecab)
 	ZEND_ARG_INFO(0, n)
@@ -419,7 +372,6 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_nbest_sparse_tostr, ZEND_SEND_BY_VAL, ZEND_
 	ZEND_ARG_INFO(0, olen)
 ZEND_END_ARG_INFO()
 
-ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_nbest_sparse_tostr_m, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 2)
 	ZEND_ARG_INFO(0, n)
 	ZEND_ARG_INFO(0, str)
@@ -427,81 +379,56 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_nbest_sparse_tostr_m, ZEND_SEND_BY_VAL, ZEN
 	ZEND_ARG_INFO(0, olen)
 ZEND_END_ARG_INFO()
 
-ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_nbest_init, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 2)
 	ZEND_ARG_INFO(0, mecab)
 	ZEND_ARG_INFO(0, str)
 	ZEND_ARG_INFO(0, len)
 ZEND_END_ARG_INFO()
 
-ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_nbest_init_m, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
 	ZEND_ARG_INFO(0, str)
 	ZEND_ARG_INFO(0, len)
 ZEND_END_ARG_INFO()
 
-ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_nbest_next_tostr, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
 	ZEND_ARG_INFO(0, mecab)
 	ZEND_ARG_INFO(0, olen)
 ZEND_END_ARG_INFO()
 
-ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_nbest_next_tostr_m, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
 	ZEND_ARG_INFO(0, olen)
 ZEND_END_ARG_INFO()
 
-ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_format_node, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
 	ZEND_ARG_INFO(0, mecab)
 	ZEND_ARG_INFO(0, node)
 ZEND_END_ARG_INFO()
 
-ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_format_node_m, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
 	ZEND_ARG_OBJ_INFO(0, node, MeCab_Node, 0)
 ZEND_END_ARG_INFO()
 
-ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_node__node, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
 	ZEND_ARG_INFO(0, node)
 ZEND_END_ARG_INFO()
 
-ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_node_toarray, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
 	ZEND_ARG_INFO(0, node)
 	ZEND_ARG_INFO(0, dump_all)
 ZEND_END_ARG_INFO()
 
-ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_node_toarray_m, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
 	ZEND_ARG_INFO(0, dump_all)
 ZEND_END_ARG_INFO()
 
-#if !PHP_MECAB_99X
-ARG_INFO_STATIC
-ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_node__list, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-	ZEND_ARG_INFO(0, node)
-	ZEND_ARG_INFO(0, index)
-ZEND_END_ARG_INFO()
-
-ARG_INFO_STATIC
-ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_node__list_m, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-	ZEND_ARG_INFO(0, index)
-ZEND_END_ARG_INFO()
-#endif
-
-ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_node_settraverse, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
 	ZEND_ARG_INFO(0, traverse)
 ZEND_END_ARG_INFO()
 
-ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab_path__path, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
 	ZEND_ARG_INFO(0, path)
 ZEND_END_ARG_INFO()
 
-ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(arginfo_mecab__magic_getter, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
 	ZEND_ARG_INFO(0, name)
 ZEND_END_ARG_INFO()
@@ -520,7 +447,6 @@ static zend_function_entry mecab_methods[] = {
 	PHP_ME_MAPPING(version, mecab_version, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
 	PHP_ME_MAPPING(split,       mecab_split, arginfo_mecab_split, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
 	PHP_ME_MAPPING(__construct, mecab_new,   arginfo_mecab_new,   ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
-#if PHP_MECAB_VERSION_NUMBER >= 97
 	PM_TAGGER_ME_MAPPING(getPartial,         get_partial)
 	PM_TAGGER_ME_MAPPING_EX(setPartial,      set_partial)
 	PM_TAGGER_ME_MAPPING(getTheta,           get_theta)
@@ -529,7 +455,6 @@ static zend_function_entry mecab_methods[] = {
 	PM_TAGGER_ME_MAPPING_EX(setLatticeLevel, set_lattice_level)
 	PM_TAGGER_ME_MAPPING(getAllMorphs,       get_all_morphs)
 	PM_TAGGER_ME_MAPPING_EX(setAllMorphs,    set_all_morphs)
-#endif /* MeCab 0.97 or later */
 	PM_TAGGER_ME_MAPPING_EX(parse,           sparse_tostr)
 	PM_TAGGER_ME_MAPPING_EX(parseToString,   sparse_tostr)
 	PM_TAGGER_ME_MAPPING_EX(parseToNode,     sparse_tonode)
@@ -567,10 +492,6 @@ static zend_function_entry mecab_node_methods[] = {
 	PM_NODE_ME_MAPPING(getBNext,    bnext)
 	PM_NODE_ME_MAPPING(getRPath,    rpath)
 	PM_NODE_ME_MAPPING(getLPath,    lpath)
-#if !PHP_MECAB_99X
-	PHP_ME(MeCab_Node, getBeginNodeList, arginfo_mecab_node__list_m, ZEND_ACC_PUBLIC)
-	PHP_ME(MeCab_Node, getEndNodeList,   arginfo_mecab_node__list_m, ZEND_ACC_PUBLIC)
-#endif
 	PM_NODE_ME_MAPPING(getSurface,  surface)
 	PM_NODE_ME_MAPPING(getFeature,  feature)
 	PM_NODE_ME_MAPPING(getId,       id)
@@ -582,9 +503,6 @@ static zend_function_entry mecab_node_methods[] = {
 	PM_NODE_ME_MAPPING(getCharType, char_type)
 	PM_NODE_ME_MAPPING(getStat,     stat)
 	PM_NODE_ME_MAPPING(isBest,      isbest)
-#if !PHP_MECAB_99X
-	PM_NODE_ME_MAPPING(getSentenceLength, sentence_length)
-#endif
 	PM_NODE_ME_MAPPING(getAlpha,    alpha)
 	PM_NODE_ME_MAPPING(getBeta,     beta)
 	PM_NODE_ME_MAPPING(getProb,     prob)
@@ -644,7 +562,6 @@ static zend_function_entry mecab_functions[] = {
 	/* MeCab API wrappers */
 	PHP_FE(mecab_new,                   arginfo_mecab_new)
 	PHP_FE(mecab_destroy,               arginfo_mecab__mecab)
-#if PHP_MECAB_VERSION_NUMBER >= 97
 	PHP_FE(mecab_get_partial,           arginfo_mecab__mecab)
 	PHP_FE(mecab_set_partial,           arginfo_mecab_set_partial)
 	PHP_FE(mecab_get_theta,             arginfo_mecab__mecab)
@@ -653,7 +570,6 @@ static zend_function_entry mecab_functions[] = {
 	PHP_FE(mecab_set_lattice_level,     arginfo_mecab_set_lattice_level)
 	PHP_FE(mecab_get_all_morphs,        arginfo_mecab__mecab)
 	PHP_FE(mecab_set_all_morphs,        arginfo_mecab_set_all_morphs)
-#endif /* MeCab 0.97 or later */
 	PHP_FE(mecab_sparse_tostr,          arginfo_mecab_sparse_tostr)
 	PHP_FE(mecab_sparse_tonode,         arginfo_mecab_sparse_tonode)
 	PHP_FE(mecab_nbest_sparse_tostr,    arginfo_mecab_nbest_sparse_tostr)
@@ -672,10 +588,6 @@ static zend_function_entry mecab_functions[] = {
 	PM_NODE_FE(bnext)
 	PM_NODE_FE(rpath)
 	PM_NODE_FE(lpath)
-#if !PHP_MECAB_99X
-	PM_NODELIST_FE(begin_node_list)
-	PM_NODELIST_FE(end_node_list)
-#endif
 	PM_NODE_FE(surface)
 	PM_NODE_FE(feature)
 	PM_NODE_FE(id)
@@ -687,9 +599,6 @@ static zend_function_entry mecab_functions[] = {
 	PM_NODE_FE(char_type)
 	PM_NODE_FE(stat)
 	PM_NODE_FE(isbest)
-#if !PHP_MECAB_99X
-	PM_NODE_FE(sentence_length)
-#endif
 	PM_NODE_FE(alpha)
 	PM_NODE_FE(beta)
 	PM_NODE_FE(prob)
@@ -1505,113 +1414,6 @@ php_mecab_path_get_node_wrapper(INTERNAL_FUNCTION_PARAMETERS, php_mecab_path_rel
 }
 /* }}} */
 
-#if !PHP_MECAB_99X
-/* {{{ php_mecab_node_list_func()
- * get begin/end node list resource from mecab_node
- */
-static void
-php_mecab_node_list_func(INTERNAL_FUNCTION_PARAMETERS, zend_bool end)
-{
-	zval *znode = NULL;
-	php_mecab_node *xnode = NULL;
-	const mecab_node_t *node = NULL;
-	long index = 0;
-
-	php_mecab_node *newnode = NULL;
-	const mecab_node_t *newptr = NULL;
-
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rl", &znode, &index) == FAILURE) {
-		return;
-	}
-	ZEND_FETCH_RESOURCE(xnode, php_mecab_node *, &znode, -1, "mecab_node", le_mecab_node);
-	node = xnode->ptr;
-
-	if (node->stat != MECAB_BOS_NODE) {
-		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Only available in BOS node");
-		return;
-	}
-
-	if (index < 0 || index > (long)node->sentence_length) {
-		php_error_docref(NULL TSRMLS_CC, E_WARNING,
-				"Index should be in range from 0 to %u: %ld given",
-				node->sentence_length, index);
-		return;
-	}
-
-	newptr = (end) ? node->end_node_list[index] : node->begin_node_list[index];
-	if (newptr == NULL) {
-		RETURN_NULL();
-	}
-
-	newnode = php_mecab_node_ctor(TSRMLS_C);
-	newnode->ptr = newptr;
-	php_mecab_node_set_tagger(newnode, xnode->tagger TSRMLS_CC);
-	ZEND_REGISTER_RESOURCE(return_value, newnode, le_mecab_node);
-}
-
-/* {{{ php_mecab_node_list_method()
- * get begin/end node list object from mecab_node
- */
-static void
-php_mecab_node_list_method(INTERNAL_FUNCTION_PARAMETERS, zend_bool end)
-{
-	php_mecab_node_object *intern = NULL;
-	php_mecab_node *xnode = NULL;
-	const mecab_node_t *node = NULL;
-	long index = 0;
-
-	php_mecab_node_object *newobj = NULL;
-	php_mecab_node *newnode = NULL;
-	const mecab_node_t *newptr = NULL;
-
-#if PHP_VERSION_ID >= 50300
-	zend_error_handling error_handling;
-
-	zend_replace_error_handling(EH_THROW, ext_ce_InvalidArgumentException, &error_handling TSRMLS_CC);
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &index) == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
-		return;
-	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
-#else
-	php_set_error_handling(EH_THROW, ext_ce_InvalidArgumentException TSRMLS_CC);
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &index) == FAILURE) {
-		php_std_error_handling();
-		return;
-	}
-	php_std_error_handling();
-#endif
-
-	intern = (php_mecab_node_object *)zend_object_store_get_object(getThis() TSRMLS_CC);
-	xnode = intern->ptr;
-	node = xnode->ptr;
-
-	if (node->stat != MECAB_BOS_NODE) {
-		zend_throw_exception(ext_ce_BadMethodCallException,
-				"Only available in BOS node", 0 TSRMLS_CC);
-		return;
-	}
-
-	if (index < 0 || index > (long)node->sentence_length) {
-		zend_throw_exception_ex(ext_ce_OutOfRangeException, 0 TSRMLS_CC,
-				"Index should be in range from 0 to %u: %ld given",
-				node->sentence_length, index);
-	}
-
-	newptr = (end) ? node->end_node_list[index] : node->begin_node_list[index];
-	if (newptr == NULL) {
-		RETURN_NULL();
-	}
-
-	object_init_ex(return_value, ce_MeCab_Node);
-	newobj = (php_mecab_node_object *)zend_object_store_get_object(return_value TSRMLS_CC);
-	newnode = newobj->ptr;
-	newnode->ptr = newptr;
-	php_mecab_node_set_tagger(newnode, xnode->tagger TSRMLS_CC);
-}
-/* }}} */
-#endif
-
 #define ANNOTATION_FINDER "@mecab_node_attribute"
 #define ANNOTATION_FINDER_LEN (sizeof(ANNOTATION_FINDER) - 1)
 
@@ -2024,7 +1826,7 @@ static PHP_FUNCTION(mecab_split)
 	if (filter != NULL) {
 		if (Z_TYPE_P(filter) == IS_NULL) {
 			filter = NULL;
-		} else if (!zend_is_callable(filter, 0, NULL IS_CALLABLE_TSRMLS_CC)) {
+		} else if (!zend_is_callable(filter, 0, NULL TSRMLS_CC)) {
 			php_error_docref(NULL TSRMLS_CC, E_WARNING, "Parameter 4 is not a valid callback");
 			return;
 		}
@@ -2433,7 +2235,6 @@ static PHP_FUNCTION(mecab_destroy)
 }
 /* }}} mecab_destroy */
 
-#if PHP_MECAB_VERSION_NUMBER >= 97
 /* {{{ proto bool mecab_get_partial(resource mecab mecab) */
 /**
  * bool mecab_get_partial(resource mecab mecab)
@@ -2649,7 +2450,6 @@ static PHP_FUNCTION(mecab_set_all_morphs)
 	mecab_set_all_morphs(mecab, (int)all_morphs);
 }
 /* }}} */
-#endif /* MeCab 0.97 or later */
 
 /* {{{ proto string mecab_sparse_tostr(resource mecab mecab, string str[, int len[, int olen]]) */
 /**
@@ -3160,13 +2960,6 @@ static PHP_FUNCTION(mecab_node_toarray)
 	add_assoc_long(return_value, "char_type",  (long)node->char_type);
 	add_assoc_long(return_value, "stat",       (long)node->stat);
 	add_assoc_bool(return_value, "isbest",     (long)node->isbest);
-#if !PHP_MECAB_99X
-	if (node->stat == MECAB_BOS_NODE) {
-		add_assoc_long(return_value, "sentence_length", (long)node->sentence_length);
-	} else {
-		add_assoc_null(return_value, "sentence_length");
-	}
-#endif
 	add_assoc_double(return_value, "alpha", (double)node->alpha);
 	add_assoc_double(return_value, "beta",  (double)node->beta);
 	add_assoc_double(return_value, "prob",  (double)node->prob);
@@ -3316,42 +3109,6 @@ static PHP_FUNCTION(mecab_node_lpath)
 	php_mecab_node_get_path_wrapper(INTERNAL_FUNCTION_PARAM_PASSTHRU, NODE_LPATH);
 }
 /* }}} mecab_node_lpath */
-
-#if !PHP_MECAB_99X
-/* {{{ proto resource mecab_node mecab_node_begin_node_list(resource mecab_node node, int index) */
-/**
- * resource mecab_node mecab_node_begin_node_list(resource mecab_node node, int index)
- *
- * Get the given index of begin-node list.
- *
- * @param	resource mecab_node	$node	The node of the source string.
- * @param	int	$index	An indexo of the node.
- * @return	resource mecab_node
- * @see	 mecab_node_end_node_list
- */
-static PHP_FUNCTION(mecab_node_begin_node_list)
-{
-	php_mecab_node_list_func(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0);
-}
-/* }}} mecab_node_begin_node_list */
-
-/* {{{ proto resource mecab_node mecab_node_end_node_list(resource mecab_node node, int index) */
-/**
- * resource mecab_node mecab_node_end_node_list(resource mecab_node node, int index)
- *
- * Get the given index of end-node list.
- *
- * @param	resource mecab_node	$node	The node of the source string.
- * @param	int	$index	An indexo of the node.
- * @return	resource mecab_node
- * @see	 mecab_node_begin_node_list
- */
-static PHP_FUNCTION(mecab_node_end_node_list)
-{
-	php_mecab_node_list_func(INTERNAL_FUNCTION_PARAM_PASSTHRU, 1);
-}
-/* }}} mecab_node_end_node_list */
-#endif
 
 /* {{{ proto string mecab_node_surface(resource mecab_node node) */
 /**
@@ -3535,37 +3292,6 @@ static PHP_FUNCTION(mecab_node_isbest)
 	PHP_MECAB_NODE_RETURN_PROPERTY(BOOL, (node->isbest == 1));
 }
 /* }}} mecab_node_isbest */
-
-#if !PHP_MECAB_99X
-/* {{{ proto int mecab_node_sentence_length(resource mecab_node node) */
-/**
- * int mecab_node_sentence_length(resource mecab_node node)
- * int MeCab_Node::getSentenceLength(void)
- *
- * Get the length of the sentence.
- *
- * @param	resource mecab_node	$node	The node of the source string.
- * @return	int	The length of the sentence if the node is BOS node, otherwise returns false.
- */
-static PHP_FUNCTION(mecab_node_sentence_length)
-{
-	/* declaration of the resources */
-	zval *object = getThis();
-	zval *znode = NULL;
-	php_mecab_node *xnode = NULL;
-	const mecab_node_t *node = NULL;
-
-	/* parse the arguments */
-	PHP_MECAB_NODE_FROM_PARAMETER();
-
-	if (node->stat == MECAB_BOS_NODE) {
-		RETURN_LONG((long)node->sentence_length);
-	} else {
-		RETURN_NULL();
-	}
-}
-/* }}} mecab_node_sentence_length */
-#endif
 
 /* {{{ proto double mecab_node_alpha(resource mecab_node node) */
 /**
@@ -3838,15 +3564,6 @@ static PHP_METHOD(MeCab_Node, __get)
 	if (!strcmp(name, "char_type")) RETURN_LONG((long)node->char_type);
 	if (!strcmp(name, "stat"))      RETURN_LONG((long)node->stat);
 	if (!strcmp(name, "isbest"))    RETURN_BOOL((long)node->isbest);
-#if !PHP_MECAB_99X
-	if (!strcmp(name, "sentence_length")) {
-		if (node->stat == MECAB_BOS_NODE) {
-			RETURN_LONG((long)node->sentence_length);
-		} else {
-			RETURN_NULL();
-		}
-	}
-#endif
 	if (!strcmp(name, "alpha"))     RETURN_DOUBLE((double)node->alpha);
 	if (!strcmp(name, "beta"))      RETURN_DOUBLE((double)node->beta);
 	if (!strcmp(name, "prob"))      RETURN_DOUBLE((double)node->prob);
@@ -4007,44 +3724,6 @@ static PHP_METHOD(MeCab_Node, setTraverse)
 	}
 }
 /* }}} MeCab_Node::setTraverse */
-
-#if !PHP_MECAB_99X
-/* {{{ proto object MeCab_Node MeCab_Node::getBeginNodeList(int index) */
-/**
- * object MeCab_Node MeCab_Node::getBeginNodeList(int index)
- *
- * Return the iterator object for the given index of begin-node list.
- *
- * @param	int	$index	An indexo of the node.
- * @return	object MeCab_Node
- * @throws	BadMethodCallException, InvalidArgumentException, OutOfBoundsException
- * @access	public
- * @see	 MeCab_Node::getEndNodeList
- */
-static PHP_METHOD(MeCab_Node, getBeginNodeList)
-{
-	php_mecab_node_list_method(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0);
-}
-/* }}} MeCab_Node::getBeginNodeList */
-
-/* {{{ proto object MeCab_Node MeCab_Node::getEndNodeList(int index) */
-/**
- * object MeCab_Node MeCab_Node::getEndNodeList(int index)
- *
- * Return the node object for the given index of end-node list.
- *
- * @param	int	$index	An indexo of the node.
- * @return	object MeCab_Node
- * @throws	BadMethodCallException, InvalidArgumentException, OutOfBoundsException
- * @access	public
- * @see	 MeCab_Node::getBeginNodeList
- */
-static PHP_METHOD(MeCab_Node, getEndNodeList)
-{
-	php_mecab_node_list_method(INTERNAL_FUNCTION_PARAM_PASSTHRU, 1);
-}
-/* }}} MeCab_Node::getEndNodeList */
-#endif
 
 /* }}} methods of class MeCab_Node */
 
