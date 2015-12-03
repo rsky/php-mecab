@@ -126,7 +126,9 @@ function catcher($errno, $errstr, $errfile, $errline, $errcontext)
     border();
     writefln('%s:%d:[%d] %s', $errfile, $errline, $errno, $errstr);
     //print_r($errcontext);
-    die($errno);
+    if ($errno !== E_DEPRECATED) {
+        die($errno);
+    }
 }
 
 set_error_handler('catcher');

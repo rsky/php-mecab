@@ -51,11 +51,15 @@ static zend_class_entry *ext_ce_BadMethodCallException;
 static zend_class_entry *ext_ce_InvalidArgumentException;
 static zend_class_entry *ext_ce_OutOfRangeException;
 
-static zend_class_entry *ce_MeCab = NULL; /* alias of MeCab_Tagger */
 static zend_class_entry *ce_MeCab_Tagger = NULL;
 static zend_class_entry *ce_MeCab_Node = NULL;
 static zend_class_entry *ce_MeCab_NodeIterator = NULL;
 static zend_class_entry *ce_MeCab_Path = NULL;
+
+static zend_class_entry *ce_MeCab_Deprecated = NULL;
+static zend_class_entry *ce_MeCab_Tagger_Deprecated = NULL;
+static zend_class_entry *ce_MeCab_Node_Deprecated = NULL;
+static zend_class_entry *ce_MeCab_Path_Deprecated = NULL;
 
 static zend_object_handlers php_mecab_object_handlers;
 static zend_object_handlers php_mecab_node_object_handlers;
@@ -421,9 +425,7 @@ ZEND_END_ARG_INFO()
 
 static zend_function_entry mecab_methods[] = {
 	/* MeCab API wrappers */
-	PHP_ME_MAPPING(version, mecab_version, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-	PHP_ME_MAPPING(split,       mecab_split, arginfo_mecab_split, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-	PHP_ME_MAPPING(__construct, mecab_new,   arginfo_mecab_new,   ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
+	PHP_ME_MAPPING(__construct, mecab_new,   arginfo_mecab_new, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
 	PM_TAGGER_ME_MAPPING(getPartial,         get_partial)
 	PM_TAGGER_ME_MAPPING_EX(setPartial,      set_partial)
 	PM_TAGGER_ME_MAPPING(getTheta,           get_theta)
@@ -441,7 +443,14 @@ static zend_function_entry mecab_methods[] = {
 	PM_TAGGER_ME_MAPPING(nextNode,           nbest_next_tonode)
 	PM_TAGGER_ME_MAPPING_EX(formatNode,      format_node)
 	PM_TAGGER_ME_MAPPING(dictionaryInfo,     dictionary_info)
-	{ NULL, NULL, NULL, 0, 0 }
+	PHP_FE_END
+};
+
+static zend_function_entry mecab_deprecated_methods[] = {
+	PHP_ME_MAPPING(version,     mecab_version, NULL,                ZEND_ACC_PUBLIC | ZEND_ACC_STATIC | ZEND_ACC_DEPRECATED)
+	PHP_ME_MAPPING(split,       mecab_split,   arginfo_mecab_split, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC | ZEND_ACC_DEPRECATED)
+	PHP_ME_MAPPING(__construct, mecab_new,     arginfo_mecab_new,   ZEND_ACC_PUBLIC | ZEND_ACC_CTOR | ZEND_ACC_DEPRECATED)
+	PHP_FE_END
 };
 /* }}} */
 
@@ -485,7 +494,12 @@ static zend_function_entry mecab_node_methods[] = {
 	PM_NODE_ME_MAPPING(getProb,     prob)
 	PM_NODE_ME_MAPPING(getWCost,    wcost)
 	PM_NODE_ME_MAPPING(getCost,     cost)
-	{ NULL, NULL, NULL, 0, 0 }
+	PHP_FE_END
+};
+
+static zend_function_entry mecab_node_deprecated_methods[] = {
+	PHP_ME(MeCab_Node, __construct, NULL, ZEND_ACC_PRIVATE | ZEND_ACC_CTOR | ZEND_ACC_DEPRECATED)
+	PHP_FE_END
 };
 /* }}} */
 
@@ -499,7 +513,7 @@ static zend_function_entry mecab_iterator_methods[] = {
 	PHP_ME(MeCab_NodeIterator,  next,       NULL, ZEND_ACC_PUBLIC)
 	PHP_ME(MeCab_NodeIterator,  rewind,     NULL, ZEND_ACC_PUBLIC)
 	PHP_ME(MeCab_NodeIterator,  valid,      NULL, ZEND_ACC_PUBLIC)
-	{ NULL, NULL, NULL, 0, 0 }
+	PHP_FE_END
 };
 /* }}} */
 
@@ -520,7 +534,12 @@ static zend_function_entry mecab_path_methods[] = {
 	PM_PATH_ME_MAPPING(getLNode, lnode)
 	PM_PATH_ME_MAPPING(getProb, prob)
 	PM_PATH_ME_MAPPING(getCost, cost)
-	{ NULL, NULL, NULL, 0, 0 }
+	PHP_FE_END
+};
+
+static zend_function_entry mecab_path_deprecated_methods[] = {
+	PHP_ME(MeCab_Path, __construct, NULL, ZEND_ACC_PRIVATE | ZEND_ACC_CTOR | ZEND_ACC_DEPRECATED)
+	PHP_FE_END
 };
 /* }}} methods */
 
@@ -532,6 +551,8 @@ static zend_function_entry mecab_path_methods[] = {
 #define PM_PATH_FE(name) PHP_FE(mecab_path_ ## name, arginfo_mecab_path__path)
 
 static zend_function_entry mecab_functions[] = {
+	ZEND_NS_NAMED_FE("MeCab", version, ZEND_FN(mecab_version), NULL)
+	ZEND_NS_NAMED_FE("MeCab", split,   ZEND_FN(mecab_split),   arginfo_mecab_split)
 	/* Get MeCab library version */
 	PHP_FE(mecab_version, NULL)
 	/* Wakati-Gaki function */
@@ -588,7 +609,7 @@ static zend_function_entry mecab_functions[] = {
 	PM_PATH_FE(lnode)
 	PM_PATH_FE(prob)
 	PM_PATH_FE(cost)
-	{ NULL, NULL, NULL, 0, 0 }
+	PHP_FE_END
 };
 /* }}} */
 
@@ -675,16 +696,9 @@ static PHP_MINIT_FUNCTION(mecab)
 	}
 #undef PHP_MECAB_GET_CE
 	{
-		zend_class_entry ce1, ce1a;
+		zend_class_entry ce1, ce1a, ce1d;
 
-		INIT_CLASS_ENTRY(ce1a, "MeCab", mecab_methods);
-		ce_MeCab = zend_register_internal_class(&ce1a TSRMLS_CC);
-		if (!ce_MeCab) {
-			return FAILURE;
-		}
-		ce_MeCab->create_object = php_mecab_object_new;
-
-		INIT_CLASS_ENTRY(ce1, "MeCab_Tagger", mecab_methods);
+		INIT_NS_CLASS_ENTRY(ce1, "MeCab", "Tagger", mecab_methods);
 		ce_MeCab_Tagger = zend_register_internal_class(&ce1 TSRMLS_CC);
 		if (!ce_MeCab_Tagger) {
 			return FAILURE;
@@ -694,27 +708,41 @@ static PHP_MINIT_FUNCTION(mecab)
 		memcpy(&php_mecab_object_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 		php_mecab_object_handlers.clone_obj = NULL;
 
-		zend_declare_class_constant_string(ce_MeCab, "VERSION", 7, (char *)mecab_version() TSRMLS_CC);
-		zend_declare_class_constant_long(ce_MeCab, "SYS_DIC", 7, MECAB_SYS_DIC TSRMLS_CC);
-		zend_declare_class_constant_long(ce_MeCab, "USR_DIC", 7, MECAB_USR_DIC TSRMLS_CC);
-		zend_declare_class_constant_long(ce_MeCab, "UNK_DIC", 7, MECAB_UNK_DIC TSRMLS_CC);
+		zend_declare_class_constant_string(ce_MeCab_Tagger, "VERSION", 7, (char *)mecab_version() TSRMLS_CC);
+		zend_declare_class_constant_long(ce_MeCab_Tagger, "SYS_DIC", 7, MECAB_SYS_DIC TSRMLS_CC);
+		zend_declare_class_constant_long(ce_MeCab_Tagger, "USR_DIC", 7, MECAB_USR_DIC TSRMLS_CC);
+		zend_declare_class_constant_long(ce_MeCab_Tagger, "UNK_DIC", 7, MECAB_UNK_DIC TSRMLS_CC);
 
 		zend_declare_class_constant_string(ce_MeCab_Tagger, "VERSION", 7, (char *)mecab_version() TSRMLS_CC);
 		zend_declare_class_constant_long(ce_MeCab_Tagger, "SYS_DIC", 7, MECAB_SYS_DIC TSRMLS_CC);
 		zend_declare_class_constant_long(ce_MeCab_Tagger, "USR_DIC", 7, MECAB_USR_DIC TSRMLS_CC);
 		zend_declare_class_constant_long(ce_MeCab_Tagger, "UNK_DIC", 7, MECAB_UNK_DIC TSRMLS_CC);
+
+		INIT_CLASS_ENTRY(ce1a, "MeCab", mecab_deprecated_methods);
+		ce_MeCab_Deprecated = zend_register_internal_class_ex(&ce1a, ce_MeCab_Tagger, ZEND_NS_NAME("MeCab", "Tagger") TSRMLS_CC);
+		if (!ce_MeCab_Deprecated) {
+			return FAILURE;
+		}
+		ce_MeCab_Deprecated->create_object = php_mecab_object_new;
+
+		INIT_CLASS_ENTRY(ce1d, "MeCab_Tagger", mecab_deprecated_methods);
+		ce_MeCab_Tagger_Deprecated = zend_register_internal_class_ex(&ce1d, ce_MeCab_Tagger, ZEND_NS_NAME("MeCab", "Tagger") TSRMLS_CC);
+		if (!ce_MeCab_Tagger_Deprecated) {
+			return FAILURE;
+		}
+		ce_MeCab_Tagger_Deprecated->create_object = php_mecab_object_new;
 	}
 	{
-		zend_class_entry ce2, ce2i;
+		zend_class_entry ce2, ce2d, ce2i;
 
-		INIT_CLASS_ENTRY(ce2, "MeCab_Node", mecab_node_methods);
+		INIT_NS_CLASS_ENTRY(ce2, "MeCab", "Node", mecab_node_methods);
 		ce_MeCab_Node = zend_register_internal_class(&ce2 TSRMLS_CC);
 		if (!ce_MeCab_Node) {
 			return FAILURE;
 		}
 		ce_MeCab_Node->create_object = php_mecab_node_object_new;
 
-		INIT_CLASS_ENTRY(ce2i, "MeCab_NodeIterator", mecab_iterator_methods);
+		INIT_NS_CLASS_ENTRY(ce2i, "MeCab", "NodeIterator", mecab_iterator_methods);
 		ce_MeCab_NodeIterator = zend_register_internal_class(&ce2i TSRMLS_CC);
 		if (!ce_MeCab_NodeIterator) {
 			return FAILURE;
@@ -735,11 +763,18 @@ static PHP_MINIT_FUNCTION(mecab)
 		zend_declare_class_constant_long(ce_MeCab_Node, "TRAVERSE_NEXT", 13, (long)TRAVERSE_NEXT TSRMLS_CC);
 		zend_declare_class_constant_long(ce_MeCab_Node, "TRAVERSE_ENEXT", 14, (long)TRAVERSE_ENEXT TSRMLS_CC);
 		zend_declare_class_constant_long(ce_MeCab_Node, "TRAVERSE_BNEXT", 14, (long)TRAVERSE_BNEXT TSRMLS_CC);
+
+		INIT_CLASS_ENTRY(ce2d, "MeCab_Node", mecab_node_deprecated_methods);
+		ce_MeCab_Node_Deprecated = zend_register_internal_class_ex(&ce2d, ce_MeCab_Node, ZEND_NS_NAME("MeCab", "Node") TSRMLS_CC);
+		if (!ce_MeCab_Node_Deprecated) {
+			return FAILURE;
+		}
+		ce_MeCab_Node_Deprecated->create_object = php_mecab_node_object_new;
 	}
 	{
-		zend_class_entry ce3;
+		zend_class_entry ce3, ce3d;
 
-		INIT_CLASS_ENTRY(ce3, "MeCab_Path", mecab_path_methods);
+		INIT_NS_CLASS_ENTRY(ce3, "MeCab", "Path", mecab_path_methods);
 		ce_MeCab_Path = zend_register_internal_class(&ce3 TSRMLS_CC);
 		if (!ce_MeCab_Path) {
 			return FAILURE;
@@ -748,6 +783,13 @@ static PHP_MINIT_FUNCTION(mecab)
 
 		memcpy(&php_mecab_path_object_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 		php_mecab_path_object_handlers.clone_obj = NULL;
+
+		INIT_CLASS_ENTRY(ce3d, "MeCab_Path", mecab_path_deprecated_methods);
+		ce_MeCab_Path_Deprecated = zend_register_internal_class_ex(&ce3d, ce_MeCab_Path, ZEND_NS_NAME("MeCab", "Path") TSRMLS_CC);
+		if (!ce_MeCab_Path_Deprecated) {
+			return FAILURE;
+		}
+		ce_MeCab_Path_Deprecated->create_object = php_mecab_path_object_new;
 	}
 
 	return SUCCESS;
