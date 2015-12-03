@@ -538,7 +538,7 @@ static PHP_MINIT_FUNCTION(mecab)
 		zend_class_entry ce1;
 
 		INIT_NS_CLASS_ENTRY(ce1, "MeCab", "Tagger", mecab_methods);
-		ce_MeCab_Tagger = zend_register_internal_class(&ce1 TSRMLS_CC);
+		ce_MeCab_Tagger = zend_register_internal_class(&ce1);
 		if (!ce_MeCab_Tagger) {
 			return FAILURE;
 		}
@@ -553,14 +553,14 @@ static PHP_MINIT_FUNCTION(mecab)
 		zend_class_entry ce2, ce2i;
 
 		INIT_NS_CLASS_ENTRY(ce2, "MeCab", "Node", mecab_node_methods);
-		ce_MeCab_Node = zend_register_internal_class(&ce2 TSRMLS_CC);
+		ce_MeCab_Node = zend_register_internal_class(&ce2);
 		if (!ce_MeCab_Node) {
 			return FAILURE;
 		}
 		ce_MeCab_Node->create_object = php_mecab_node_object_new;
 
 		INIT_NS_CLASS_ENTRY(ce2i, "MeCab", "NodeIterator", mecab_iterator_methods);
-		ce_MeCab_NodeIterator = zend_register_internal_class(&ce2i TSRMLS_CC);
+		ce_MeCab_NodeIterator = zend_register_internal_class(&ce2i);
 		if (!ce_MeCab_NodeIterator) {
 			return FAILURE;
 		}
@@ -587,7 +587,7 @@ static PHP_MINIT_FUNCTION(mecab)
 		zend_class_entry ce3;
 
 		INIT_NS_CLASS_ENTRY(ce3, "MeCab", "Path", mecab_path_methods);
-		ce_MeCab_Path = zend_register_internal_class(&ce3 TSRMLS_CC);
+		ce_MeCab_Path = zend_register_internal_class(&ce3);
 		if (!ce_MeCab_Path) {
 			return FAILURE;
 		}
