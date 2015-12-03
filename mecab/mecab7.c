@@ -723,7 +723,6 @@ php_mecab_free_object_storage(zend_object *object TSRMLS_DC)
 	php_mecab_object *intern = php_mecab_object_fetch_object(object);
 	php_mecab_dtor(intern->ptr TSRMLS_CC);
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
-	efree(intern);
 }
 /* }}} */
 
@@ -811,7 +810,6 @@ php_mecab_node_free_object_storage(zend_object *object TSRMLS_DC)
 	php_mecab_node_object *intern = php_mecab_node_object_fetch_object(object);
 	php_mecab_node_dtor(intern->ptr TSRMLS_CC);
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
-	efree(intern);
 }
 /* }}} */
 
@@ -896,7 +894,6 @@ php_mecab_path_free_object_storage(zend_object *object TSRMLS_DC)
 	php_mecab_path_object *intern = php_mecab_path_object_fetch_object(object);
 	php_mecab_path_dtor(intern->ptr TSRMLS_CC);
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
-	efree(intern);
 }
 /* }}} */
 
