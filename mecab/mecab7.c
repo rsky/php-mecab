@@ -668,7 +668,7 @@ php_mecab_dtor(php_mecab *mecab TSRMLS_DC)
 	mecab->ref--;
 	if (mecab->ref == 0) {
 		if (mecab->str != NULL) {
-			zend_string_free(mecab->str);
+			zend_string_release(mecab->str);
 		}
 		mecab_destroy(mecab->ptr);
 		efree(mecab);
@@ -683,12 +683,12 @@ static void
 php_mecab_set_string(php_mecab *mecab, zend_string *str TSRMLS_DC)
 {
 	if (mecab->str != NULL) {
-		zend_string_free(str);
+		zend_string_release(mecab->str);
 	}
 	if (str == NULL) {
 		mecab->str = NULL;
 	} else {
-		mecab->str = zend_string_dup(str, 0);
+		mecab->str = zend_string_copy(str);
 	}
 }
 /* }}} */
