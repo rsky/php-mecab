@@ -57,3 +57,6 @@ dwsync.xml
 ###################
 *.komodoproject
 .komodotools
+
+# phpenv
+.php-version
