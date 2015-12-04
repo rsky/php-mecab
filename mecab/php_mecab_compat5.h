@@ -125,6 +125,12 @@
 #define PHP_MECAB_NODE_RETURN_PROPERTY(type, ...) PHP_MECAB_RETURN_PROPERTY(node, type, __VA_ARGS__)
 #define PHP_MECAB_PATH_RETURN_PROPERTY(type, ...) PHP_MECAB_RETURN_PROPERTY(path, type, __VA_ARGS__)
 
+#define PHP_MECAB_REGISTER_CONSTANT(name) \
+	REGISTER_LONG_CONSTANT(#name, name, CONST_PERSISTENT | CONST_CS)
+
+#define PHP_MECAB_REGISTER_NS_CONSTANT(name) \
+	REGISTER_NS_LONG_CONSTANT("MeCab", #name, MECAB_##name, CONST_PERSISTENT | CONST_CS)
+
 #if PHP_API_VERSION < 20100412
 static inline void
 object_properties_init(zend_object *object, zend_class_entry *class_type)

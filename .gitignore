@@ -40,6 +40,7 @@ Thumbs.db
 ehthumbs.db
 nbproject
 .cache
+.idea
 .project
 .settings
 .tmproj
@@ -56,3 +57,6 @@ dwsync.xml
 ###################
 *.komodoproject
 .komodotools
+
+# phpenv
+.php-version

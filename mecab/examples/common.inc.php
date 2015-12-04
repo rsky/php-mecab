@@ -89,19 +89,36 @@ function writefln($fmt)
     echo PHP_EOL;
 }
 
-function format($surface, $feature, $id, $stat)
-{
-    switch ($stat) {
-      case MECAB_BOS_NODE:
-        $str = 'BOS';
-        break;
-      case MECAB_EOS_NODE:
-        $str = 'EOS';
-        break;
-      default:
-        $str = $surface;
+if (defined('MECAB_BOS_NODE')) {
+    function format($surface, $feature, $id, $stat)
+    {
+        switch ($stat) {
+            case MECAB_BOS_NODE:
+                $str = 'BOS';
+                break;
+            case MECAB_EOS_NODE:
+                $str = 'EOS';
+                break;
+            default:
+                $str = $surface;
+        }
+        return sprintf('%d: %s [%s]', $id, $str, $feature);
     }
-    return sprintf('%d: %s [%s]', $id, $str, $feature);
+} else {
+    function format($surface, $feature, $id, $stat)
+    {
+        switch ($stat) {
+            case MeCab\BOS_NODE:
+                $str = 'BOS';
+                break;
+            case MeCab\EOS_NODE:
+                $str = 'EOS';
+                break;
+            default:
+                $str = $surface;
+        }
+        return sprintf('%d: %s [%s]', $id, $str, $feature);
+    }
 }
 
 function catcher($errno, $errstr, $errfile, $errline, $errcontext)
@@ -109,7 +126,9 @@ function catcher($errno, $errstr, $errfile, $errline, $errcontext)
     border();
     writefln('%s:%d:[%d] %s', $errfile, $errline, $errno, $errstr);
     //print_r($errcontext);
-    die($errno);
+    if ($errno !== E_DEPRECATED) {
+        die($errno);
+    }
 }
 
 set_error_handler('catcher');

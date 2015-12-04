@@ -15,20 +15,19 @@ if (isset($_SERVER['argv'])) {
 } else {
     $options = array();
 }
-writeln(MECAB_VERSION);
 
-$t = mecab_new($options);
+writeln(MeCab\VERSION);
 
-writeln(mecab_sparse_tostr($t, $sentence));
+$t = new MeCab\Tagger($options);
 
-$m = mecab_sparse_tonode($t, $sentence);
-while ($m) {
-    writeln(mecab_node_surface($m) . "\t" . mecab_node_feature($m));
-    $m = mecab_node_next($m);
+writeln($t->parse($sentence));
+
+foreach ($t->parseToNode($sentence) as $m) {
+    writeln($m->surface . "\t" . $m->feature);
 }
 writeln('EOS');
 
-$di = mecab_dictionary_info($t);
+$di = $t->dictionaryInfo();
 foreach ($di as $d) {
     writefln('filename: %s', $d['filename']);
     writefln('charset: %s', $d['charset']);
