@@ -259,7 +259,7 @@ php_mecab_path_free_object_storage(void *object TSRMLS_DC);
 
 /* get the class entry */
 static zend_class_entry *
-php_mecab_get_class_entry(char *name, uint length TSRMLS_DC);
+php_mecab_get_class_entry(const char *lcname TSRMLS_DC);
 
 /* }}} */
 
@@ -690,17 +690,19 @@ static PHP_MINIT_FUNCTION(mecab)
 	le_mecab_path = zend_register_list_destructors_ex(
 			php_mecab_path_free_resource, NULL, "mecab_path", module_number);
 
-#define PHP_MECAB_GET_CE(ce, lcname) \
-	(ce = php_mecab_get_class_entry(lcname, sizeof(lcname) - 1 TSRMLS_CC))
-	if (PHP_MECAB_GET_CE(ext_ce_Iterator, "iterator") == NULL ||
-		PHP_MECAB_GET_CE(ext_ce_IteratorAggregate, "iteratoraggregate") == NULL ||
-		PHP_MECAB_GET_CE(ext_ce_BadMethodCallException, "badmethodcallexception") == NULL ||
-		PHP_MECAB_GET_CE(ext_ce_InvalidArgumentException, "invalidargumentexception") == NULL ||
-		PHP_MECAB_GET_CE(ext_ce_OutOfRangeException, "outofrangeexception") == NULL)
+	ext_ce_Iterator = php_mecab_get_class_entry("iterator" TSRMLS_CC);
+	ext_ce_IteratorAggregate = php_mecab_get_class_entry("iteratoraggregate" TSRMLS_CC);
+	ext_ce_BadMethodCallException = php_mecab_get_class_entry("badmethodcallexception" TSRMLS_CC);
+	ext_ce_InvalidArgumentException = php_mecab_get_class_entry("invalidargumentexception" TSRMLS_CC);
+	ext_ce_OutOfRangeException = php_mecab_get_class_entry("outofrangeexception" TSRMLS_CC);
+	if (ext_ce_Iterator == NULL ||
+		ext_ce_IteratorAggregate == NULL ||
+		ext_ce_BadMethodCallException == NULL ||
+		ext_ce_InvalidArgumentException == NULL ||
+		ext_ce_OutOfRangeException == NULL)
 	{
 		return FAILURE;
 	}
-#undef PHP_MECAB_GET_CE
 	{
 		zend_class_entry ce1, ce1a, ce1d;
 
@@ -1431,11 +1433,10 @@ php_mecab_path_get_node_wrapper(INTERNAL_FUNCTION_PARAMETERS, php_mecab_path_rel
  * get the class entry
  */
 static zend_class_entry *
-php_mecab_get_class_entry(char *name, uint length TSRMLS_DC)
+php_mecab_get_class_entry(const char *lcname TSRMLS_DC)
 {
 	zend_class_entry **pce;
-
-	if (zend_hash_find(CG(class_table), name, length + 1, (void **)&pce) == SUCCESS) {
+	if (zend_hash_find(CG(class_table), lcname, strlen(lcname) + 1, (void **)&pce) == SUCCESS) {
 		return *pce;
 	} else {
 		return NULL;

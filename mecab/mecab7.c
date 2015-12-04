@@ -255,7 +255,7 @@ static inline php_mecab_path_object * php_mecab_path_object_fetch_object(zend_ob
 
 /* get the class entry */
 static zend_class_entry *
-php_mecab_get_class_entry(char *name, uint length TSRMLS_DC);
+php_mecab_get_class_entry(const char *lcname TSRMLS_DC);
 
 /* }}} */
 
@@ -520,17 +520,19 @@ static PHP_MINIT_FUNCTION(mecab)
 	PHP_MECAB_REGISTER_NS_CONSTANT(USR_DIC);
 	PHP_MECAB_REGISTER_NS_CONSTANT(UNK_DIC);
 
-#define PHP_MECAB_GET_CE(ce, lcname) \
-	(ce = php_mecab_get_class_entry(lcname, sizeof(lcname) - 1 TSRMLS_CC))
-	if (PHP_MECAB_GET_CE(ext_ce_Iterator, "iterator") == NULL ||
-		PHP_MECAB_GET_CE(ext_ce_IteratorAggregate, "iteratoraggregate") == NULL ||
-		PHP_MECAB_GET_CE(ext_ce_BadMethodCallException, "badmethodcallexception") == NULL ||
-		PHP_MECAB_GET_CE(ext_ce_InvalidArgumentException, "invalidargumentexception") == NULL ||
-		PHP_MECAB_GET_CE(ext_ce_OutOfRangeException, "outofrangeexception") == NULL)
+	ext_ce_Iterator = php_mecab_get_class_entry("iterator" TSRMLS_CC);
+	ext_ce_IteratorAggregate = php_mecab_get_class_entry("iteratoraggregate" TSRMLS_CC);
+	ext_ce_BadMethodCallException = php_mecab_get_class_entry("badmethodcallexception" TSRMLS_CC);
+	ext_ce_InvalidArgumentException = php_mecab_get_class_entry("invalidargumentexception" TSRMLS_CC);
+	ext_ce_OutOfRangeException = php_mecab_get_class_entry("outofrangeexception" TSRMLS_CC);
+	if (ext_ce_Iterator == NULL ||
+		ext_ce_IteratorAggregate == NULL ||
+		ext_ce_BadMethodCallException == NULL ||
+		ext_ce_InvalidArgumentException == NULL ||
+		ext_ce_OutOfRangeException == NULL)
 	{
 		return FAILURE;
 	}
-#undef PHP_MECAB_GET_CE
 	{
 		zend_class_entry ce1;
 
@@ -1156,9 +1158,9 @@ php_mecab_path_get_node_wrapper(INTERNAL_FUNCTION_PARAMETERS, php_mecab_path_rel
  * get the class entry
  */
 static zend_class_entry *
-php_mecab_get_class_entry(char *name, uint length TSRMLS_DC)
+php_mecab_get_class_entry(const char *lcname TSRMLS_DC)
 {
-	zval *entry = zend_hash_str_find(CG(class_table), name, length);
+	zval *entry = zend_hash_str_find(CG(class_table), lcname, strlen(lcname));
 	if (entry && Z_TYPE_P(entry) == IS_PTR) {
 		return Z_PTR_P(entry);
 	} else {
