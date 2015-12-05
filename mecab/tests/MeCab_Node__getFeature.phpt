@@ -1,10 +1,7 @@
 --TEST--
-MeCab_Node::getFeature() member function
+MeCab\Node::getFeature() member function
 --SKIPIF--
 <?php
-if (!extension_loaded('mecab')) {
-    die('skip mecab extension is not loaded');
-}
 die('skip test is not implemented');
 ?>
 --FILE--

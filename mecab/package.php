@@ -11,14 +11,23 @@ $summary        = 'The PHP bindings of the MeCab.';
 $description    = $summary;
 
 // information of cureent version
-$version        = '0.5.0';
-$apiversion     = '0.5.0';
+$version        = '0.6.0';
+$apiversion     = '0.6.0';
 $stability      = 'beta';
 $apistability   = 'beta';
 
 $notes = <<<EOS
-- Added support for PHP 5.4.0.
-- Added support for MeCab 0.99.
+* Add support for PHP 7.
+* Add `MeCab` namespace classes and constants.
+* Non-namespace classes are not supported on PHP 7.
+* Non-namespace constants are not supported on PHP 7.
+* Procedural APIs (`mecab_*` functions)  are not supported on PHP 7.
+* Non-namespace classes are deprecated on PHP 5.
+* PHP versions earlier than 5.3 are no longer supported.
+* MeCab versions earlier than 0.99 are no longer supported.
+* Removed features:
+    * `\$filter` callback argument of `mecab_split()` function.
+    * The persistent resource.
 EOS;
 
 // set parameters to the package
@@ -33,7 +42,6 @@ $packagexml->setOptions(array(
         "{$packagename}-{$version}.tgz"),
     'dir_roles' => array(
         'tests'     => 'test',
-        'manual'    => 'doc',
         'examples'  => 'data'),
     'exceptions'    => array(
         "{$packagename}.dsp"    => 'src',
@@ -58,7 +66,7 @@ $packagexml->addMaintainer('lead', 'rsk', 'Ryusuke SEKIYAMA', 'rsky0711@gmail.co
 $packagexml->setPackageType('extsrc');
 $packagexml->setProvidesExtension($packagename);
 $packagexml->addConfigureOption('with-mecab', 'specify pathname to mecab-config', 'no');
-$packagexml->setPhpDep('5.2.0');
+$packagexml->setPhpDep('5.3.0');
 $packagexml->setPearinstallerDep('1.4.1');
 
 $packagexml->setChannel($channel);

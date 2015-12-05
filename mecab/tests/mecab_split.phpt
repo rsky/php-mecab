@@ -2,14 +2,13 @@
 mecab_split() function
 --SKIPIF--
 <?php
-if (!extension_loaded('mecab')) {
-    die('skip mecab extension is not loaded');
+if (PHP_VERSION_ID >= 70000) {
+    die('skip this feature is not available in PHP 7');
 }
-die('skip test is not implemented');
 ?>
 --FILE--
 <?php
-echo 'OK'; // no test case for this function yet
+echo implode('/', mecab_split('The quick brown fox jumps over the lazy dog.'));
 ?>
 --EXPECT--
-OK
+The/quick/brown/fox/jumps/over/the/lazy/dog/.

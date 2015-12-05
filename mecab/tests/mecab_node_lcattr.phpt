@@ -2,8 +2,8 @@
 mecab_node_lcattr() function
 --SKIPIF--
 <?php
-if (!extension_loaded('mecab')) {
-    die('skip mecab extension is not loaded');
+if (PHP_VERSION_ID >= 70000) {
+    die('skip this feature is not available in PHP 7');
 }
 die('skip test is not implemented');
 ?>

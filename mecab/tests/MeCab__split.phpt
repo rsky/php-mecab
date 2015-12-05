@@ -1,15 +1,8 @@
 --TEST--
-MeCab::split() member function
---SKIPIF--
-<?php
-if (!extension_loaded('mecab')) {
-    die('skip mecab extension is not loaded');
-}
-die('skip test is not implemented');
-?>
+MeCab\split() member function
 --FILE--
 <?php
-echo 'OK'; // no test case for this function yet
+echo implode('/', MeCab\split('The quick brown fox jumps over the lazy dog.'));
 ?>
 --EXPECT--
-OK
+The/quick/brown/fox/jumps/over/the/lazy/dog/.

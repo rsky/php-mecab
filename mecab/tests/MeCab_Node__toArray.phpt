@@ -1,10 +1,7 @@
 --TEST--
-MeCab_Node::toArray() member function
+MeCab\Node::toArray() member function
 --SKIPIF--
 <?php
-if (!extension_loaded('mecab')) {
-    die('skip mecab extension is not loaded');
-}
 die('skip test is not implemented');
 ?>
 --FILE--
