@@ -62,7 +62,7 @@ extern "C" {
 #include "TSRM.h"
 #endif
 
-#define PHP_MECAB_MODULE_VERSION "0.5.0"
+#define PHP_MECAB_MODULE_VERSION "0.6.0"
 
 #ifndef PHP_MECAB_VERSION_NUMBER
 #define PHP_MECAB_VERSION_NUMBER 0
