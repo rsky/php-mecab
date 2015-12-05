@@ -1,7 +1,7 @@
 /**
  * The MeCab PHP extension
  *
- * Copyright (c) 2006-2012 Ryusuke SEKIYAMA. All rights reserved.
+ * Copyright (c) 2006-2015 Ryusuke SEKIYAMA. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -23,9 +23,9 @@
  *
  * @package     php-mecab
  * @author      Ryusuke SEKIYAMA <rsky0711@gmail.com>
- * @copyright   2006-2012 Ryusuke SEKIYAMA
+ * @copyright   2006-2015 Ryusuke SEKIYAMA
  * @license     http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version     SVN: $Id$
+ * @version     $Id$
  */
 
 #include "php_mecab.h"

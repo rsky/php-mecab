@@ -19,7 +19,7 @@ To compile your new extension, you will have to execute the following steps:
 LICENSE
 -------
 ```
-Copyright (c) 2006-2012 Ryusuke SEKIYAMA. All rights reserved.
+Copyright (c) 2006-2015 Ryusuke SEKIYAMA. All rights reserved.
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
