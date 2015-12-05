@@ -2,17 +2,13 @@
 mecab_version() function
 --SKIPIF--
 <?php
-if (!extension_loaded('mecab')) {
-    die('skip mecab extension is not loaded');
+if (PHP_VERSION_ID >= 70000) {
+    die('skip this feature is not available in PHP 7');
 }
 ?>
 --FILE--
 <?php
-if (preg_match('/^0\\.[1-9][0-9]+$/', mecab_version())) {
-    echo 'OK';
-} else {
-    echo 'Unexpected MeCab Version';
-}
+echo MeCab\version();
 ?>
---EXPECT--
-OK
+--EXPECTREGEX--
+[0-9]\.[0-9]+

@@ -1,10 +1,7 @@
 --TEST--
-MeCab_Tagger::parseNBestInit() member function
+MeCab\Tagger::parseNBestInit() member function
 --SKIPIF--
 <?php
-if (!extension_loaded('mecab')) {
-    die('skip mecab extension is not loaded');
-}
 die('skip test is not implemented');
 ?>
 --FILE--

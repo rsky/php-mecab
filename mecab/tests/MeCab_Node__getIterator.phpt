@@ -1,10 +1,7 @@
 --TEST--
-MeCab_Node::getIterator() member function
+MeCab\Node::getIterator() member function
 --SKIPIF--
 <?php
-if (!extension_loaded('mecab')) {
-    die('skip mecab extension is not loaded');
-}
 die('skip test is not implemented');
 ?>
 --FILE--

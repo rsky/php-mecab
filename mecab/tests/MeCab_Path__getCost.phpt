@@ -1,10 +1,7 @@
 --TEST--
-MeCab_Path::getCost() member function
+MeCab\Path::getCost() member function
 --SKIPIF--
 <?php
-if (!extension_loaded('mecab')) {
-    die('skip mecab extension is not loaded');
-}
 die('skip test is not implemented');
 ?>
 --FILE--

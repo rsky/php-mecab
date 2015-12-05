@@ -1,10 +1,7 @@
 --TEST--
-MeCab_Path::getRNode() member function
+MeCab\Path::getRNode() member function
 --SKIPIF--
 <?php
-if (!extension_loaded('mecab')) {
-    die('skip mecab extension is not loaded');
-}
 die('skip test is not implemented');
 ?>
 --FILE--
