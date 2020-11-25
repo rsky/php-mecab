@@ -32,7 +32,7 @@
 #include "php_mecab_compat7.h"
 
 #define PATHBUFSIZE (MAXPATHLEN + 3)
-
+#define ulong unsigned long
 /* {{{ globals */
 
 static ZEND_DECLARE_MODULE_GLOBALS(mecab)
