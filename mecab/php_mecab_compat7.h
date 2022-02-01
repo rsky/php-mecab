@@ -31,7 +31,7 @@
 	name = x##name->ptr;
 
 #define PHP_MECAB_PARSE_PARAMETERS(fmt, ...) { \
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, fmt, __VA_ARGS__) == FAILURE) { \
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), fmt, __VA_ARGS__) == FAILURE) { \
 		return; \
 	} else { \
 		const php_mecab_object *intern = php_mecab_object_fetch_object(Z_OBJ_P(getThis())); \
@@ -41,7 +41,7 @@
 }
 
 #define PHP_MECAB_PARSE_PARAMETERS2(name, fmt, ...) { \
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, fmt, __VA_ARGS__) == FAILURE) { \
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), fmt, __VA_ARGS__) == FAILURE) { \
 		return; \
 	} else { \
 		const php_mecab_##name##_object *intern = php_mecab_##name##_object_fetch_object(Z_OBJ_P(getThis())); \
